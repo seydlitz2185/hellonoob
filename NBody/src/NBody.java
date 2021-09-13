@@ -18,7 +18,8 @@ public  class NBody {
             for (Body planet :  planets) {
                 planet.draw();
             }
-            /*StdAudio.play("audio/2001.mid");*/
+            /**StdAudio.play("/Users/stevenyu/Desktop/lab1-checkoff/NBody/src/audio/cjmg.mp3");*/
+            StdAudio.play("/Users/stevenyu/Desktop/lab1-checkoff/NBody/src/audio/2001.mid");
         }
 
         for(int i = 0;i<(int)T;i+=dt){

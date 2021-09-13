@@ -29,7 +29,7 @@ public class IntList {
      * A List with null rest, and first = 0.
      */
     public IntList() {
-    /* NOTE: public IntList () { }  would also work. */
+        /* NOTE: public IntList () { }  would also work. */
         this(0, null);
     }
 
@@ -81,8 +81,12 @@ public class IntList {
      */
 
     public static IntList dcatenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+        if(A.rest == null){
+            A.rest = B;
+            return A;
+        }
+        dcatenate(A.rest,B);
+        return A;
     }
 
     /**
@@ -90,8 +94,12 @@ public class IntList {
      * * elements of B.  May NOT modify items of A.  Use 'new'.
      */
     public static IntList catenate(IntList A, IntList B) {
-        //TODO:  fill in method
-        return null;
+
+        if(B == null){return null;}
+        if (A == null) {
+            return new IntList(B.first, catenate(A,B.rest));
+        }
+        return new IntList(A.first, catenate(A.rest,B));
     }
 
 
@@ -146,6 +154,7 @@ public class IntList {
      * as THIS. Cannot handle IntLists with cycles. You are not expected to
      * read or understand this method.
      */
+    @Override
     public boolean equals(Object x) {
         if (!(x instanceof IntList)) {
             return false;
