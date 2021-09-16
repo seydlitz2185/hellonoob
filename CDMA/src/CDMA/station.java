@@ -1,6 +1,9 @@
+/**
+ * @author stevenyu
+ */
 package CDMA;
 import java.util.ArrayList;
-import java.util.Scanner;
+
 public class station {
     private int bit ;
     private String str;
@@ -9,12 +12,13 @@ public class station {
     private ArrayList<Integer>sequence;
     private ArrayList<Integer>reversequence;
 
-    public station (String s){
+    public station (int bit,String s){
+        this.bit = bit;
         this.str = s;
         this.setSeq();
     }
 
-    private int[] stringtoInt(String s){
+    private int[] stringToInt(String s){
         String[] temp = s.split("");
         int []a = new int[s.length()];
         for (int i = 0; i<s.length(); i++) {
@@ -22,29 +26,24 @@ public class station {
         }
         return a;
     }
-    private void setBit(){
-//        System.out.print("请设置本站码片宽度：");
-//        Scanner in = new Scanner(System.in);
-//        this.bit = in.nextInt();
-        bit = 8;
+    private void setBit(int a){
+        System.out.print("请设置本站码片宽度：");
+        this.bit = a;
     }
 
-    private void setStr(){
+    private void setStr(String s){
         System.out.print("请设置本站码片：");
-        Scanner in = new Scanner(System.in);
-        str = in.nextLine();
+        str = s;
     }
 
     public void setSequence(){
-        setBit();
-        setStr();
-        int[] temp = stringtoInt(str);
+        int[] temp = stringToInt(str);
         sequence = new ArrayList(bit);
         reversequence = new ArrayList(bit);
         for (int i = 0; i<bit; i++) {
-            if(temp[i] == 0)
-                sequence.add(i,-1);
-            else sequence.add(i,1);
+            if(temp[i] == 0){
+                sequence.add(i,-1);}
+            else{sequence.add(i,1);}
         }
         for (int i = 0; i<bit; i++) {
             reversequence.add(i,-sequence.get(i));
@@ -52,11 +51,10 @@ public class station {
     }
 
     public void setSeq(){
-        setBit();
-//        setStr();
+
         this.seq = new int[bit];
         this.reverseq = new int[bit];
-        int[] temp = stringtoInt(str);
+        int[] temp = stringToInt(str);
         for (int i = 0; i<bit; i++) {
             if(temp[i] == 1) {
                 seq[i] = 1;
@@ -89,23 +87,23 @@ public class station {
     public void in (int[]a){
         QA(a);
     }
-    public int[] out(){
-        System.out.println("请输入要发送的比特流：（例如：10011101）");
-        Scanner in = new Scanner(System.in);
-        String str = in.nextLine();
-        int[] temp = stringtoInt(str);
+    public int[] out(String s){
+        String str = s;
+        int[] temp = stringToInt(str);
+        System.out.println("已发送比特流："+s);
         int[] out = new int[temp.length*bit];
-        for(int i = 0;i<temp.length;i++){
-            if (temp[i] == 1){
-                if (bit * ((i) + 1) - bit * (i) >= 0)
+        for(int i = 0;i<temp.length;i++) {
+            if (temp[i] == 1) {
+                if (bit * ((i) + 1) - bit * (i) >= 0) {
                     System.arraycopy(seq,
                             bit * (i) - (i * bit),
                             out,
                             bit * (i),
                             bit * ((i) + 1) - bit * (i));
-            }else if(temp[i] == 0){
-                for(int j = bit*(i);j < bit*((i)+1);j++){
-                    out[j] = reverseq[j-(i*bit)];
+                } else if (temp[i] == 0) {
+                    for (int j = bit * (i); j < bit * ((i) + 1); j++) {
+                        out[j] = reverseq[j - (i * bit)];
+                    }
                 }
             }
         }
