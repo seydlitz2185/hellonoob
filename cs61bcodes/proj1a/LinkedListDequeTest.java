@@ -35,8 +35,7 @@ public class LinkedListDequeTest {
 	  * && is the "and" operation. */
 	public static void addIsEmptySizeTest() {
 		System.out.println("Running add/isEmpty/Size test.");
-		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
+
 		LinkedListDeque<String> lld1 = new LinkedListDeque<String>();
 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -58,7 +57,7 @@ public class LinkedListDequeTest {
 		lld1.printDeque();
 
 		printTestStatus(passed);
-		*/
+
 	}
 
 	/** Adds an item, then removes an item, and ensures that dll is empty afterwards. */
@@ -66,8 +65,6 @@ public class LinkedListDequeTest {
 
 		System.out.println("Running add/remove test.");
 
-		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
 		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
 		// should be empty 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -81,12 +78,50 @@ public class LinkedListDequeTest {
 		passed = checkEmpty(true, lld1.isEmpty()) && passed;
 
 		printTestStatus(passed);
-		*/
-	}
 
+	}
+	public static void LinkedListDequeDeepCopyTest(){
+		System.out.println("Running LinkedListDequeDeepCopyTest.");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(10);
+		lld1.addFirst(9);
+		lld1.addFirst(8);
+		lld1.addFirst(7);
+		lld1.addFirst(6);
+		lld1.addFirst(5);
+		lld1.addFirst(4);
+		lld1.addFirst(3);
+		lld1.addFirst(2);
+		lld1.addFirst(1);
+		LinkedListDeque lld2 = new LinkedListDeque(lld1);
+		System.out.println("PASSED if below lines are the same：");
+		lld1.printDeque();
+		lld2.printDeque();
+	}
+	public static void getRecursiveTest(){
+		System.out.println("Running getRecursiveTest.");
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(10);
+		lld1.addFirst(9);
+		lld1.addFirst(8);
+		lld1.addFirst(7);
+		lld1.addFirst(6);
+		lld1.addFirst(5);
+		lld1.addFirst(4);
+		lld1.addFirst(3);
+		lld1.addFirst(2);
+		lld1.addFirst(1);
+		int expected =  8;
+		int input = lld1.getRecursive(7);
+		org.junit.Assert.assertEquals(expected,input);
+		System.out.println("PASSED!");
+
+	}
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
-		addIsEmptySizeTest();
-		addRemoveTest();
-	}
+	 	addIsEmptySizeTest();
+	 	addRemoveTest();
+	 	LinkedListDequeDeepCopyTest();
+	 	getRecursiveTest();
+	 }
 } 
