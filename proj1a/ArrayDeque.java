@@ -1,5 +1,7 @@
+
 /**
  * @author stevenyu
+ * Final
  */
 public class ArrayDeque<Item> implements List<Item>{
     /**R = size / items. length
@@ -11,8 +13,8 @@ public class ArrayDeque<Item> implements List<Item>{
     private int nextLast;
     public ArrayDeque() {
         this.items = (Item[]) new Object[8];
-        nextFirst = 0;
-        nextLast = 0;
+        nextFirst = 3;
+        nextLast = 4;
         size = 0;
     }
     public ArrayDeque(ArrayDeque a) {
@@ -27,67 +29,73 @@ public class ArrayDeque<Item> implements List<Item>{
     public void SizeBalance(){
         double R = (double) size/items.length;
         if (R < 0.25 && items.length >= 16){
-            resizeF(items.length/2);
-            if(nextLast >=items.length ){
-                nextLast = items.length-1;
-            }
-        }else if(R >=1){
+            resize(items.length/2);
+        }else if(R >=1 || ((nextLast == items.length)||(nextFirst == -1))
+        ){
             resize(items.length*2);
         }
     }
     /**resize,items[size-1] is empty */
-    private void resize(int capacity) {
-        Item[] a =(Item[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, size);
+//        private void resize(int capacity) {
+//            Item[] a =(Item[]) new Object[capacity];
+//            System.arraycopy(items, 0, a, 0, size);
+//            items = a;
+//        }
+//        private void resizeF(int capacity) {
+//            Item[] a =(Item[]) new Object[capacity];
+//            System.arraycopy(items, nextFirst, a, 0, size);
+//            nextFirst=0;
+//            nextLast = size-1;
+//            items = a;
+//        }
+    private void alignCenter(int length){
+        nextFirst = (length-size)/2-1;
+        nextLast = (length+size)/2;
+    }
+    private void resize(int capacity){
+        Item[] a = (Item[]) new Object[capacity];
+        System.arraycopy(items,nextFirst+1,a,(capacity-size)/2,size);
         items = a;
+        alignCenter(items.length);
     }
-    private void resizeF(int capacity) {
-        Item[] a =(Item[]) new Object[capacity];
-        System.arraycopy(items, nextFirst, a, 0, size);
-        nextFirst=0;
-        nextLast =size-1;
-        items = a;
-    }
-
-    private void moveNextFirst(){
-        if(nextFirst +1== items.length){
-            nextFirst = 0;
-        }else {nextFirst++;}
-    }
-    private void moveNextLast(){
-        if(nextLast+1 == items.length){
-            nextLast = 0;
-        }else {nextLast++;}
-    }
+    //        private void moveNextFirst(){
+//            if(nextFirst +1== items.length){
+//                nextFirst = 0;
+//            }else {nextFirst++;}
+//        }
+//        private void moveNextLast(){
+//            if(nextLast+1 == items.length){
+//                nextLast = 0;
+//            }else {nextLast++;}
+//        }
     @Override
     public void addFirst(Item x){
-        if(items[nextFirst] ==null){size ++;}
         items[nextFirst] = x;
+        nextFirst--;
+        size++;
         SizeBalance();
-        moveNextFirst();
+//            moveNextFirst();
     }
 
     @Override
     public void addLast(Item x) {
-        if(items[nextLast] ==null){size ++;}
         items[nextLast] = x;
+        nextLast++;
+        size++;
         SizeBalance();
-        moveNextLast();
+        //           moveNextLast();
     }
 
 
     @Override
     public Item removeFirst(){
+        if(nextLast-nextFirst == 1){
+            alignCenter(items.length);
+            return null;
+        }
         Item ret;
-//        if (items[nextFirst] == null){
-//            nextFirst--;
-//            ret = null;
-//        }else
-
-        ret = items[nextFirst];
+        ret = items[++nextFirst];
         items[nextFirst] = null;
-        nextFirst++;
-
         if (ret != null){
             size--;
         }
@@ -97,19 +105,13 @@ public class ArrayDeque<Item> implements List<Item>{
     /***/
     @Override
     public Item removeLast(){
-        Item ret;
-//        if( items[nextLast-1] == null){
-//            nextLast--;
-//            ret = null;
-//        }else
-        if (nextLast == 0 ){
-            ret= items[0];
-            nextLast = items.length-1;
-            items[0] = null;
-        }else {
-            ret = items[--nextLast];
-            items[nextLast] = null;
+        if(nextLast-nextFirst == 1){
+            alignCenter(items.length);
+            return null;
         }
+        Item ret;
+        ret = items[--nextLast];
+        items[nextLast] = null;
         if (ret != null){
             size--;
         }
@@ -153,3 +155,4 @@ public class ArrayDeque<Item> implements List<Item>{
 
 
 }
+
