@@ -1,4 +1,3 @@
-
 /**
  * @author stevenyu
  */
@@ -45,13 +44,15 @@ public class ArrayDeque<Item> implements List<Item>{
     private void resizeF(int capacity) {
         Item[] a =(Item[]) new Object[capacity];
         System.arraycopy(items, nextFirst, a, 0, size);
+        nextFirst=0;
+        nextLast =size-1;
         items = a;
     }
 
     private void moveNextFirst(){
-        if(nextFirst-1 == -1){
-            nextFirst = items.length-1;
-        }else {nextFirst--;}
+        if(nextFirst +1== items.length){
+            nextFirst = 0;
+        }else {nextFirst++;}
     }
     private void moveNextLast(){
         if(nextLast+1 == items.length){
@@ -82,14 +83,11 @@ public class ArrayDeque<Item> implements List<Item>{
 //            nextFirst--;
 //            ret = null;
 //        }else
-            if (nextFirst -1 ==-1 ) {
-            ret = items[0];
-            nextFirst = items.length - 1;
-            items[0] = null;
-        }else {
-            ret = items[--nextFirst];
-            items[nextFirst] = null;
-        }
+
+        ret = items[nextFirst];
+        items[nextFirst] = null;
+        nextFirst++;
+
         if (ret != null){
             size--;
         }
@@ -104,8 +102,8 @@ public class ArrayDeque<Item> implements List<Item>{
 //            nextLast--;
 //            ret = null;
 //        }else
-            if (nextLast -1 == -1 ){
-             ret= items[0];
+        if (nextLast == 0 ){
+            ret= items[0];
             nextLast = items.length-1;
             items[0] = null;
         }else {
