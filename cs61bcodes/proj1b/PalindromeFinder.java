@@ -1,4 +1,4 @@
-/** This class outputs all palindromes in the words file in the current directory. */
+/* This class outputs all palindromes in the words file in the current directory. */
 /**
  * brute force
  * @author Dr.Seydlitz
@@ -7,12 +7,16 @@
 public class PalindromeFinder {
 
     public static int findMostPalindromesN(int length,int n){
-        In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
+        /*
+          win
+         */
+        //In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
+        In in = new In("/Users/stevenyu/Desktop/lab1-checkoff/library-sp19/data/words.txt");
         int palindromecounter = 0;
         int max = 0;
 
 
-        String maxWord = new String();
+        String maxWord = "";
         Palindrome palindrome = new Palindrome();
         String word;
 
@@ -40,9 +44,10 @@ public class PalindromeFinder {
 
     public static void main(String[] args) {
 
-        In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
+        //In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
+        In in = new In("/Users/stevenyu/Desktop/lab1-checkoff/library-sp19/data/words.txt");
         int wordLength = in.readLine().length();
-        int temp = 0;
+        int temp;
         int maxN=0;
         int maxi=0;
 
@@ -75,7 +80,7 @@ public class PalindromeFinder {
         System.out.println("N = "+maxi+" are there the most palindromes in English, has "+maxN+" palindromes. ");
 
 
-/**
+/*
  *      origin version
  */
 //        int minLength = 4;
