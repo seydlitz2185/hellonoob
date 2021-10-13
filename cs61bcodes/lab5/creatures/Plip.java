@@ -1,14 +1,13 @@
 package creatures;
 
-import huglife.Creature;
-import huglife.Direction;
-import huglife.Action;
-import huglife.Occupant;
+import huglife.*;
 
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
+
+import static huglife.HugLifeUtils.randomEntry;
 
 /**
  * An implementation of a motile pacifist photosynthesizer.
@@ -16,28 +15,29 @@ import java.util.Map;
  * @author Josh Hug
  */
 public class Plip extends Creature {
-
+    protected double minEnergy = 0;
+    protected double maxEnergy = 2;
     /**
      * red color.
      */
-    private int r;
+    private int r ;
     /**
      * green color.
      */
-    private int g;
+    private int g ;
     /**
      * blue color.
      */
-    private int b;
+    private int b ;
 
     /**
      * creates plip with energy equal to E.
      */
     public Plip(double e) {
         super("plip");
-        r = 0;
-        g = 0;
-        b = 0;
+        r = 99;
+        g = 63;
+        b = 76;
         energy = e;
     }
 
@@ -57,7 +57,7 @@ public class Plip extends Creature {
      * that you get this exactly correct.
      */
     public Color color() {
-        g = 63;
+        refreshColor();
         return color(r, g, b);
     }
 
@@ -74,7 +74,8 @@ public class Plip extends Creature {
      * private static final variable. This is not required for this lab.
      */
     public void move() {
-        // TODO
+        changeEnergy(-0.15);
+        refreshColor();
     }
 
 
@@ -82,7 +83,8 @@ public class Plip extends Creature {
      * Plips gain 0.2 energy when staying due to photosynthesis.
      */
     public void stay() {
-        // TODO
+        changeEnergy(0.2);
+        refreshColor();
     }
 
     /**
@@ -91,7 +93,9 @@ public class Plip extends Creature {
      * Plip.
      */
     public Plip replicate() {
-        return this;
+        this.energy /= 2;
+        Plip baby = new Plip(energy);
+        return baby;
     }
 
     /**
@@ -113,18 +117,49 @@ public class Plip extends Creature {
         boolean anyClorus = false;
         // TODO
         // (Google: Enhanced for-loop over keys of NEIGHBORS?)
-        // for () {...}
-
-        if (false) { // FIXME
-            // TODO
+        for (Direction key :neighbors.keySet()) {
+            if(neighbors.get(key).name().equals("empty")) {
+                emptyNeighbors.add(key);
+            }
+            if(neighbors.get(key).name().equals("clorus")){
+                anyClorus = true;
+            }
+        }
+        // HINT: randomEntry(emptyNeighbors)
+        if (emptyNeighbors.isEmpty()) { // FIXME
+            return new Action(Action.ActionType.STAY);
+        } else if (this.energy >= 1.0){
+            this.replicate();
+            return new Action(Action.ActionType.REPLICATE,randomEntry(emptyNeighbors));
+        }else if(anyClorus == true){
+             double numberBetweenOneAndZero = Math.random();
+             if(numberBetweenOneAndZero < 0.5) {
+                 return new Action(Action.ActionType.MOVE,randomEntry(emptyNeighbors));
+             } else return new Action(Action.ActionType.STAY);
+        }else {
+            return new Action(Action.ActionType.STAY);
         }
 
-        // Rule 2
-        // HINT: randomEntry(emptyNeighbors)
-
-        // Rule 3
-
-        // Rule 4
-        return new Action(Action.ActionType.STAY);
     }
+
+    public void changeEnergy(double d){
+        this.energy += d;
+        if(this.energy > maxEnergy){
+            this.energy = maxEnergy;
+        } else if (this.energy <minEnergy){
+            this.energy = minEnergy;
+        }
+    }
+
+
+    public void refreshColor(){
+        if(energy == minEnergy){
+            g = 63;
+        }else if (energy == maxEnergy){
+            g = 255;
+        }else{
+            g = (int)(96*energy+63);
+        }
+    }
+
 }
