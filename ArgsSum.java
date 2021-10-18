@@ -6,4 +6,5 @@ public class ArgsSum{
 		} 
 		System.out.println("Sum of args:" + sum);
 	}
+//test
 }
