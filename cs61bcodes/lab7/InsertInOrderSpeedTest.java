@@ -29,9 +29,9 @@ public class InsertInOrderSpeedTest {
         String repeat = "y";
         do {
             System.out.print("\nEnter # strings to insert into the maps: ");
-            int N = i.waitForPositiveInt(input);
+            int N = InsertRandomSpeedTest.waitForPositiveInt(input);
             timeInOrderMap61B(new ULLMap<>(), N);
-            timeInOrderMap61B(new BSTMap<>(), N);
+            timeInOrderMap61B(new BSTMap(), N);
             timeInOrderTreeMap(new TreeMap<>(), N);
             timeInOrderHashMap(new HashMap<>(), N);
 

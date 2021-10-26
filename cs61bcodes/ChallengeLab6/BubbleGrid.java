@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 /**
  * @author stevenyu
  */
@@ -14,19 +15,21 @@ positions within the grid.
 It is in the topmost row of the grid, or
 It is orthogonally adjacent to a bubble that is stuck.
  */
-
+/**LeetCode 699*/
 public class BubbleGrid {
     int[][] grid;
     UnionFind u;
+
     public BubbleGrid() {
         this.grid = new int[][]{{1, 1, 1,1,1},
                                 {0, 1, 1,0,1},
                                 {1, 0, 0,1,0},
                                 {1, 1, 1,1,0}};
     }
-    public BubbleGrid(int[][] grid){
+    public BubbleGrid(int[][] grid) {
         this.grid = grid;
     }
+
     public void toWqu(){
         u = new UnionFind(grid.length*grid[0].length);
         for (int i = 0 ;i<grid.length;i++){
@@ -73,6 +76,7 @@ public class BubbleGrid {
             return j != 0 && j != grid[0].length - 1 && (isStuck(i+1,j)||isStuck(i+1,j+1)||isStuck(i+1,j-1));
         }
     }
+    /**not good：runtime is θ(N^2)*/
     public int[] popBubbles(int[][] darts) {
         ArrayList<Integer> bubbles = new ArrayList<>();
         /*store sizeof UnionFind before throw oneshot*/
@@ -101,6 +105,25 @@ public class BubbleGrid {
         return bubbles.stream().mapToInt(Integer::intValue).toArray();
     }
 
+    public int[] enhancedPopBubbles(int[][] darts) {
+        ArrayList<Integer> bubbles = new ArrayList<>();
+        /*store sizeof UnionFind before throw oneshot*/
+
+        printGrid();
+        for (int[] oneShot: darts) {
+            if (u.find(oneShot[0] * grid[0].length + oneShot[1])== -999) {
+                /*hit empty*/
+                bubbles.add(0);
+            } else {
+                /*refresh grid and UnionFind*/
+                u.items[u.parent(oneShot[0] * grid[0].length + oneShot[1]) ] = -999;
+
+            }
+            printGrid();
+        }
+        return bubbles.stream().mapToInt(Integer::intValue).toArray();
+    }
+
     public int sizeOfGrid(){
         int cache = 0;
         for (int i = 0 ;i<grid[0].length;i++){
@@ -116,7 +139,14 @@ public class BubbleGrid {
             System.out.println(Arrays.toString(row));
         }
     }
+
+
     public static void main(String[] args) {
+        int[][] agrid = new int[][]{{1, 1, 1,1,1},
+                {0, 1, 1,0,1},
+                {1, 0, 0,1,0},
+                {1, 1, 1,1,0}};
+        long startTime=System.currentTimeMillis();   //获取开始时间
         BubbleGrid b = new BubbleGrid();
         b.toWqu();
         int[][] darts = new int[][]{{3,3},{3,2},{3,0},{3,1},{3,3},{3,2}};
@@ -126,8 +156,12 @@ public class BubbleGrid {
             System.out.println(Arrays.toString(row));
         }
         int[] i = b.popBubbles(darts);
+
         System.out.println("投掷结束");
         System.out.println("每次投掷击落的bubble数分别为：");
         System.out.println(Arrays.toString(i));
+        long endTime=System.currentTimeMillis(); //获取结束时间
+
+        System.out.println("程序运行时间： "+(endTime-startTime)+"ms");
     }
 }
