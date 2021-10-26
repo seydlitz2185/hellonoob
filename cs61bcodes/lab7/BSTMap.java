@@ -1,12 +1,14 @@
+import com.sun.jdi.Value;
+
 import java.util.*;
 import java.lang.UnsupportedOperationException;
 import java.lang.IllegalArgumentException;
 /**
  * @author stevenyu
  */
-public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
+public class BSTMap<Key extends Comparable<Key>, Value >implements Map61B{
     private Node root;
-    public class Node{
+    public class Node {
         Key key;
         Value val;
         private Node LeftChild, RightChild;
@@ -16,6 +18,12 @@ public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
             this.key = key;
             this.val = val;
             this.size = size;
+        }
+
+        public void copyVal(Node node) {
+            this.key = node.key;
+            this.val = node.val;
+            this.size = node.size;
         }
     }
 
@@ -89,7 +97,7 @@ public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
     }
 
     public void printInOrder(){
-        /**To the left*/
+        /*To the left*/
         printNode(root);
     }
 
@@ -106,7 +114,7 @@ public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
 
     @Override
     public Set keySet() {
-        Set<Key> keySet = new HashSet<Key>();
+        Set<Key> keySet = new HashSet<>();
         keySet(root,keySet);
         return keySet;
     }
@@ -122,7 +130,7 @@ public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
         Stack<Key> keys;
 
         public BSTMapIterator() {
-            this.keys = new Stack<Key>();
+            this.keys = new Stack<>();
         }
 
         @Override
@@ -143,19 +151,111 @@ public class BSTMap<Key extends Comparable<Key>, Value>implements Map61B{
             toStack(node.RightChild,keys);
         }
     }
-    @Override
-    public Object remove(Object key) {
-        if(!containsKey(key)){
-            return null;
+
+    public Key getPre(Node node, Key key){
+        int compareVal = node.key.compareTo(key);
+        if(compareVal<0 && node.size == 1){
+            return node.key;
+        } else if(compareVal<0 && node.size >1){
+            if( node.RightChild !=null){
+                return getPre(node.RightChild,key);
+            }else {
+                return node.key;
+            }
+        }else {
+            return  getPre(node.LeftChild,key);
         }
-        
-      //  Node n =  get(key);
-        return null;
+    }
+
+    public Key getSuc(Node node,Key key){
+        int compareVal = node.key.compareTo(key);
+        if(compareVal>0 && node.size == 1){
+            return node.key;
+        }else if(compareVal>0 && node.size >1 ){
+            if( node.LeftChild !=null){
+                return getSuc(node.LeftChild,key);
+            }else {
+                return node.key;
+            }
+
+        }else {
+            return  getSuc(node.RightChild,key);
+        }
+    }
+    public Node getNode(Key key){
+        return getNode(root,key);
+    }
+
+    public Node getNode(Node node ,Key key){
+        if (key == null) {
+            throw new IllegalArgumentException("calls getNode() with a null key");
+        }else if(node==null){
+            return null;
+        }else if(key.compareTo(node.key) <0){
+            return getNode(node.LeftChild,key);
+        }else if(key.compareTo(node.key) >0){
+            return getNode(node.RightChild,key);
+        }else {
+            return node;
+        }
     }
 
     @Override
+    public Object remove(Object key) {
+        if (!containsKey(key)) {
+            return null;
+        } else {
+            return removeHelper(root, (Key) key);
+        }
+    }
+    private Value removeHelper(Node node, Key key) {
+        int compareVal = node.key.compareTo(key);
+        if (compareVal > 0) {
+            node.size--;
+            return removeHelper(node.LeftChild, key);
+        } else if (compareVal < 0) {
+            node.size--;
+            return removeHelper(node.RightChild, key);
+        }else if(node == root && size() ==1 ){
+            Value val = root.val;
+            root = null;
+            return val;
+        }else {
+            Value retVal = node.val;
+
+            if(node.LeftChild == null && node.RightChild == null){
+                return retVal;
+            }else if(node.LeftChild != null && node.RightChild == null){
+                Node temp = node.LeftChild;
+                node.copyVal(node.LeftChild);
+                node.LeftChild = temp.LeftChild;
+                node.RightChild = temp.RightChild;
+            }else if(node.LeftChild == null){
+                Node temp = node.RightChild;
+                node.copyVal(node.RightChild);
+                node.LeftChild = temp.LeftChild;
+                node.RightChild = temp.RightChild;
+            }else {
+                Node successor = getNode(getSuc(root,node.key));
+                Node successorPre = getNode(getSuc(root,successor.key));
+                Node predecessor = getNode(getPre(root,node.key));
+                node.copyVal(successor);
+                node.LeftChild = predecessor;
+                node.RightChild = successorPre;
+                removeHelper(successor,successor.key);
+            }
+            return retVal;
+        }
+
+
+    }
+    @Override
     public Object remove(Object key, Object value) {
-        throw new UnsupportedOperationException("This BST doesn't support method remove");
+        if (key == null) {
+            return null;
+        } else {
+            return removeHelper(root, (Key) key);
+        }
     }
 
     @Override

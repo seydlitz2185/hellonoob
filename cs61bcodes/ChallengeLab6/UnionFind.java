@@ -35,6 +35,7 @@ public class UnionFind {
         return parent(v1);
     }
 
+
     public boolean connected(int v1, int v2){
         return v1== v2 ||parent(v1) == parent(v2);
     }

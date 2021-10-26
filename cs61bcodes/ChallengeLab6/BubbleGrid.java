@@ -81,6 +81,7 @@ public class BubbleGrid {
         ArrayList<Integer> bubbles = new ArrayList<>();
         /*store sizeof UnionFind before throw oneshot*/
         int cache;
+  //      int car = 0;
         printGrid();
         for (int[] oneShot: darts) {
             System.out.println();
@@ -89,7 +90,19 @@ public class BubbleGrid {
             System.out.println("向" + Arrays.toString(oneShot) + "扔出飞镖");
             cache = sizeOfGrid();
             grid[oneShot[0]][oneShot[1]] = 0;
-
+/**
+ int[] temp = new int[u.items.length];
+            System.arraycopy(u.items, 0, temp, 0, u.items.length);
+            temp[oneShot[0] * grid[0].length + oneShot[1]] = -999;
+           car = 0;
+            for (int i = 0; i < u.items.length; i++) {
+                if (u.items[u.parent(i)] != -999 && temp[u.parent(i)] == -999) {
+                    car++;
+                }
+            }
+            bubbles.add(car);
+        }
+        */
             if (u.find(oneShot[0] * grid[0].length + oneShot[1])== -999) {
                 /*hit empty*/
                 bubbles.add(0);
