@@ -28,15 +28,15 @@ public class InsertInOrderSpeedTest {
         do {
             System.out.print("\nEnter # strings to insert into ULLMap: ");
             timeInOrderMap61B(new ULLMap<String, Integer>(), 
-                              i.waitForPositiveInt(input));
+                              InsertRandomSpeedTest.waitForPositiveInt(input));
        
             System.out.print("\nEnter # strings to insert into MyHashMap: ");
             timeInOrderMap61B(new MyHashMap<String, Integer>(), 
-                              i.waitForPositiveInt(input));
+                              InsertRandomSpeedTest.waitForPositiveInt(input));
     
             System.out.print("\nEnter # strings to insert into Java's HashMap: ");
             timeInOrderHashMap(new HashMap<String, Integer>(), 
-                              i.waitForPositiveInt(input));                        
+                              InsertRandomSpeedTest.waitForPositiveInt(input));
 
             System.out.print("\nWould you like to try more timed-tests? (y/n): ");
             repeat = input.nextLine();
