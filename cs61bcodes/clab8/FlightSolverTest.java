@@ -26,7 +26,7 @@ public class FlightSolverTest {
     public void naiveTest() {
         int[] startTimes = {10, 20, 30, 40};
         int[] endTimes = {19, 29, 39, 49};
-        int[] passengerCounts = {1, 2, 3, 4};
+        int[] passengerCounts = {2, 1, 3, 4};
         FlightSolver solver = new FlightSolver(makeFlights(startTimes, endTimes, passengerCounts));
         assertEquals(4, solver.solve());
     }
@@ -48,11 +48,29 @@ public class FlightSolverTest {
      */
     @Test
     public void mediumTest() {
-        int[] startTimes = {15, 23, 18, 42, 55, 75, 78};
-        int[] endTimes = {27, 45, 44, 65, 90, 95, 85};
-        int[] passengerCounts = {20, 30, 10, 25, 5, 10, 15};
-        FlightSolver solver = new FlightSolver(makeFlights(startTimes, endTimes, passengerCounts));
+        int[] startTimes = {15, 23, 18, 42, 55, 75, 78,};
+        int[] endTimes = {27, 45, 44, 65, 90, 95, 85,};
+        int[] passengerCounts = {20, 30, 10, 25, 5, 10, 15,};
+    //    FlightSolver solver = new FlightSolver(makeFlights(startTimes, endTimes, passengerCounts));
+        FlightSolverGood solver= new FlightSolverGood(makeFlights(startTimes, endTimes, passengerCounts));
         assertEquals(65, solver.solve());
+    }
+
+    @Test
+    public void rubustTest() {
+        int magicVal= 1000000;
+        int[] startTimes = new int[magicVal];
+        int[] endTimes =new int[magicVal];
+        int[] passengerCounts = new int[magicVal];
+        for (int i = 0 ;i<magicVal;i++){
+            int temp = (int)(Math.random()*100);
+            startTimes[i] = temp;
+            endTimes[i]=temp+(int)(Math.random()*100);
+            passengerCounts[i]=(int)(Math.random()*100);
+        }
+     //   FlightSolver solver = new FlightSolver(makeFlights(startTimes, endTimes, passengerCounts));
+        FlightSolverGood solver= new FlightSolverGood(makeFlights(startTimes, endTimes, passengerCounts));
+        assertEquals(0,solver.solve());
     }
 
 }
