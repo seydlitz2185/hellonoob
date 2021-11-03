@@ -17,13 +17,18 @@ class RollingString{
      */
     static final int PRIMEBASE = 6113;
 
+    private String rollingString;
+    private char[] rollingStringCharArray;
+    private int size ;
     /**
      * Initializes a RollingString with a current value of String s.
      * s must be the same length as the maximum length.
      */
     public RollingString(String s, int length) {
         assert(s.length() == length);
-        /* FIX ME */
+        rollingString = s;
+        rollingStringCharArray = rollingString.toCharArray();
+        size = length;
     }
 
     /**
@@ -33,6 +38,10 @@ class RollingString{
      */
     public void addChar(char c) {
         /* FIX ME */
+        String newRollingString = String.copyValueOf(rollingStringCharArray,1,size-1);
+        newRollingString = newRollingString+c;
+        this.rollingString = newRollingString;
+        this.rollingStringCharArray = newRollingString.toCharArray();
     }
 
 
@@ -41,10 +50,12 @@ class RollingString{
      * the String. Should take linear time in the number of characters in
      * the string.
      */
+    @Override
     public String toString() {
         StringBuilder strb = new StringBuilder();
         /* FIX ME */
-        return "";
+        strb.append(rollingString);
+        return strb.toString();
     }
 
     /**
@@ -53,7 +64,7 @@ class RollingString{
      */
     public int length() {
         /* FIX ME */
-        return -1;
+        return size;
     }
 
 
@@ -65,7 +76,7 @@ class RollingString{
     @Override
     public boolean equals(Object o) {
         /* FIX ME */
-        return false;
+        return this.rollingString.equals((o.toString()));
     }
 
     /**
@@ -75,6 +86,11 @@ class RollingString{
     @Override
     public int hashCode() {
         /* FIX ME */
-        return -1;
+        int hashCode=1;
+        for (char a: rollingStringCharArray
+             ) {
+            hashCode*=((int)a)%UNIQUECHARS;
+        }
+        return hashCode%PRIMEBASE;
     }
 }
