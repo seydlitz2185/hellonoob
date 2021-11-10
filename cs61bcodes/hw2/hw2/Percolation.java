@@ -1,19 +1,30 @@
 package hw2;
 
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
-
+import java.util.HashSet;
 public class Percolation {
-    WeightedQuickUnionUF grids;
-    int index;
-    int gridSize;
+    private WeightedQuickUnionUF grids;
+    private int index;
+    private int gridSize;
+    private int virtualTopSite;
+    private int virtualDownSite;
+    private HashSet<Integer> openedGirds;
     // create N-by-N grid, with all sites initially blocked
     public Percolation(int N){
         this.index = N;
         this.gridSize = N*N;
-        grids =new WeightedQuickUnionUF(gridSize);
+        virtualTopSite = gridSize;
+        virtualDownSite = gridSize+1;
+        /*add virtual top site and virutal down site */
+        grids =new WeightedQuickUnionUF(gridSize+2);
+        for (int i = 0; i < index;i++) {
+            grids.union(virtualTopSite,i);
+            grids.union(virtualDownSite,index*(index-1)+i);
+        }
+        openedGirds = new HashSet<>();
     }
     //address isolation
-    public int xyTo1D(int row,int col){
+    private int xyTo1D(int row,int col){
         return row*index+col;
     }
     // open the site (row, col) if it is not open already
@@ -22,33 +33,31 @@ public class Percolation {
         if(wquIndex <0 ||wquIndex >= gridSize){
             throw new java.lang.IllegalArgumentException("outSide");
         }
+        openedGirds.add(wquIndex);
         if(grids.count()==gridSize){
             return;
         }else {
             int[] neighbours = getNeighbours(row,col);
             for (int neighbour: neighbours) {
-                if(neighbour!=-1){
-                    grids.connected(neighbour,wquIndex);
+                if (openedGirds.contains(neighbour)){
+                    grids.union(neighbour,wquIndex);
                 }
             }
         }
-        grids.union(wquIndex,wquIndex);
     }
 
     private int[] getNeighbours(int row,int col){
-        /*neighbours[0] = upper
-         *neighbours[1] = right
-         *neighbours[2] = lower
-         *neighbours[3] = left*/
         int[] neighbours= new int[4];
         int upper = (row-1)*index+col;
         int lower = (row+1)*index+col;
         int left = row*index+col-1;
         int right = row*index+col+1;
+        neighbours[0]=upper;
+        neighbours[1]= right;
+        neighbours[2]= lower;
+        neighbours[3]= left;
         if(row==index-1 ){
-            neighbours[0]= upper;
-            neighbours[1]= right;
-            neighbours[3]= left;
+            neighbours[2]= -1;
             if(col==index-1){
                 neighbours[1]= -1;
             }else if(col==0) {
@@ -56,20 +65,14 @@ public class Percolation {
             }
             return neighbours;
         }else if(row%index==0){
-            neighbours[1]= right;
-            neighbours[2]= lower;
-            neighbours[3]= left;
+            neighbours[0]= -1;
             if(col==index-1){
-                neighbours[1]=0;
+                neighbours[1]=-1;
             }else if(col == 0){
-                neighbours[3]=0;
+                neighbours[3]=-1;
             }
             return neighbours;
         }else {
-            neighbours[0]=upper;
-            neighbours[1]= right;
-            neighbours[2]= lower;
-            neighbours[3]= left;
             if(col==0){
                 neighbours[3]=-1;
             }else if(col==index-1){
@@ -84,7 +87,7 @@ public class Percolation {
         if(wquIndex <0 ||wquIndex >= gridSize){
             throw new java.lang.IllegalArgumentException("outSide");
         }
-        return true;
+        return openedGirds.contains(wquIndex);
     }
     // is the site (row, col) full?
     public boolean isFull(int row, int col){
@@ -92,24 +95,39 @@ public class Percolation {
         if(wquIndex <0 ||wquIndex >= gridSize){
             throw new java.lang.IllegalArgumentException("outSide");
         }
-        return true;
+        return grids.connected(wquIndex,virtualTopSite);
     }
     // number of open sites
     public int numberOfOpenSites(){
-        return 0;
+        return openedGirds.size();
     }
     // does the system percolate?
     public boolean percolates(){
-        return true;
+        return grids.connected(virtualTopSite,virtualDownSite);
+    }
+    public String getOpenedGrids(){
+        return openedGirds.toString();
     }
     // use for unit testing (not required, but keep this here for the autograder)
     public static void main(String[] args){
-        WeightedQuickUnionUF w = new WeightedQuickUnionUF(10);
-        System.out.println(w.count());
-        w.union(1,1);
-        System.out.println();
-        System.out.println(w.count());
-
+        int index = 5;
+        Percolation p = new Percolation(index);
+        while (!p.percolates()) {
+            for (int i = 0; i < (int) Math.pow(index, 2); i++) {
+                int row = (int) (Math.random() * 10);
+                int col = (int) (Math.random() * 10);
+                try {
+                    p.open(row, col);
+                } catch (Exception e) {
+                    continue;
+                }
+                System.out.println(p.getOpenedGrids());
+            }
+            System.out.println(p.percolates());
+            if(!p.percolates()){
+                p=new Percolation(index);
+            }
+        }
     }
 }
 
