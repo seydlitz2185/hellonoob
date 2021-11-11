@@ -95,7 +95,7 @@ public class Percolation {
         if(wquIndex <0 ||wquIndex >= gridSize){
             throw new java.lang.IllegalArgumentException("outSide");
         }
-        return grids.connected(wquIndex,virtualTopSite);
+        return openedGirds.contains(wquIndex)&&grids.connected(wquIndex,virtualTopSite);
     }
     // number of open sites
     public int numberOfOpenSites(){
@@ -108,26 +108,31 @@ public class Percolation {
     public String getOpenedGrids(){
         return openedGirds.toString();
     }
+
+    public int getGridSize() {
+        return gridSize;
+    }
+
     // use for unit testing (not required, but keep this here for the autograder)
     public static void main(String[] args){
-        int index = 5;
-        Percolation p = new Percolation(index);
-        while (!p.percolates()) {
-            for (int i = 0; i < (int) Math.pow(index, 2); i++) {
-                int row = (int) (Math.random() * 10);
-                int col = (int) (Math.random() * 10);
-                try {
-                    p.open(row, col);
-                } catch (Exception e) {
-                    continue;
-                }
-                System.out.println(p.getOpenedGrids());
-            }
-            System.out.println(p.percolates());
-            if(!p.percolates()){
-                p=new Percolation(index);
-            }
-        }
+//        int index = 10;
+//        Percolation p = new Percolation(index);
+//        while (!p.percolates()) {
+//            for (int i = 0; i < (int) Math.pow(index, 2); i++) {
+//                int row = (int) (Math.random() * 10);
+//                int col = (int) (Math.random() * 10);
+//                try {
+//                    p.open(row, col);
+//                } catch (Exception e) {
+//                    continue;
+//                }
+//                System.out.println(p.getOpenedGrids());
+//            }
+//            System.out.println(p.percolates());
+//            if(!p.percolates()){
+//                p=new Percolation(index);
+//            }
+//        }
     }
 }
 
