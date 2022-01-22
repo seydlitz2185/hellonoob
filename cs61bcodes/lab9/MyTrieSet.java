@@ -1,3 +1,4 @@
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +11,33 @@ public class MyTrieSet implements TrieSet61B{
     /**root of trie */
     private Node root;
 
-    private static class DataIndexedCharMap <N> {
-        List<N> items = new ArrayList<N>(R);
-        public DataIndexedCharMap(int R) {
+    public MyTrieSet() {
+        this.root = new Node(false,R);
+    }
+
+    private static class DataIndexedCharMap <Node> {
+        private Node[] items ;
+        public DataIndexedCharMap (int R) {
+            items = (Node[]) new Object[R];
 
         }
+
+        private void addNode(int i, Node n){
+            items[i] = n;
+        }
+
+        private boolean contiansNode(int i){
+            if(!(null == items[i])){
+                return true;
+            }
+            return false;
+        }
     }
+
     private static class Node{
         private boolean isKey;
         private DataIndexedCharMap next;
+
         private Node(boolean isKey, int R){
             this.isKey = isKey;
             next = new DataIndexedCharMap<Node>(R);
@@ -33,21 +52,32 @@ public class MyTrieSet implements TrieSet61B{
     @Override
     public boolean contains(String key) {
         Node curr = root;
-        for (char c: key.toCharArray()
-        ) {
+        Node temp;
+        char[] keyArray = key.toCharArray();
 
-        }
 
-        return false;
-    }
-
-    private boolean containsHelper(Node n,int i){
         return false;
     }
 
     @Override
     public void add(String key) {
+        Node curr = root;
+        Node temp;
+        char[] keyArray = key.toCharArray();
+        int index;
+        for (int i = 0; i< keyArray.length-1;i++){
+            index = keyArray[i];
+            if(!curr.next.contiansNode(index)) {
+                temp = new Node(false,R);
+                curr.next.addNode(index, temp);
+                curr = temp;
+            }else {
+                curr = (Node) curr.next.items[index];
+            }
 
+        }
+        temp = new Node(true,R);
+        curr.next.addNode(keyArray[keyArray.length-1], temp);
     }
 
     @Override
@@ -58,5 +88,14 @@ public class MyTrieSet implements TrieSet61B{
     @Override
     public String longestPrefixOf(String key) {
         throw new UnsupportedOperationException();
+    }
+    public static void main(String[] args) {
+        String s = "The";
+        String t = "The great";
+        String p = "Thus";
+        MyTrieSet mts = new MyTrieSet();
+        mts.add(s);
+        mts.add(t);
+        mts.add(p);
     }
 }
