@@ -2,9 +2,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+
 public class SeparableEnemySolver {
 
     Graph g;
+    Map<String, Boolean> markedLabel;
+    Map<String,Integer> edgeTo;
+    private boolean result = true;
 
     /**
      * Creates a SeparableEnemySolver for a file with name filename. Enemy
@@ -21,10 +25,41 @@ public class SeparableEnemySolver {
 
     /**
      * Returns true if input is separable, false otherwise.
+     * @author stevenyu
+     * DFS method
      */
     public boolean isSeparable() {
-        // TODO: Fix me
-        return false;
+        markedLabel = new HashMap<>(g.labels().size());
+        edgeTo = new HashMap<>();
+        for (String s :g.labels()
+        ) {
+            markedLabel.put(s,false);
+            edgeTo.put(s,0);
+        }
+
+        DFS(g,(String) g.labels().toArray()[0]);
+        for (String s : g.labels()) {
+            if (markedLabel.get(s)==false){
+                DFS(g,s);
+            }
+        }
+
+        return result;
+    }
+
+    private void DFS(Graph g, String label){
+        markedLabel.replace(label,true);
+        for (String s : g.neighbors(label)){
+            if(!markedLabel.get(s)){
+                edgeTo.replace(s,edgeTo.get(label)+1);
+                DFS(g,s);
+            }else {
+                if(edgeTo.get(label)-edgeTo.get(s)%2 ==0){
+                    result = false;
+                    break;
+                }
+            }
+        }
     }
 
 
@@ -75,7 +110,7 @@ public class SeparableEnemySolver {
      * @source https://www.baeldung.com/java-csv-file-array
      */
     private List<String> getRecordFromLine(String line) {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         Scanner rowScanner = new Scanner(line);
         rowScanner.useDelimiter(",");
         while (rowScanner.hasNext()) {
