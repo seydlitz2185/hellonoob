@@ -39,7 +39,7 @@ public class WeightedQuickUnion {
     public void union(int v1, int v2) {
         validate(v1);
         validate(v2);
-        if (connected(v1, v2)) return;
+        if (connected(v1, v2)){ return;}
         if (sizeOf(v1)>sizeOf(v2)) {
             unionHelper(v2,v1);
         } else {

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
+import static bearmaps.PrintHeapDemo.printFancyHeapDrawing;
+
 /** A very basic implementation of the ExtrinsicMinPQ.
  *  Operations have very poor performance, but it's at least
  *  correct, with one exception: The add method
@@ -110,5 +112,25 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
         public int hashCode() {
             return item.hashCode();
         }
+    }
+
+    public static void main(String[] args){
+        NaiveMinPQ<Integer> minPQ = new NaiveMinPQ();
+        minPQ.add(19,19);
+        minPQ.add(3,3);
+        minPQ.add(4,4);
+        minPQ.add(9,9);
+        minPQ.add(11,11);
+        minPQ.add(12,12);
+        minPQ.add(1,1);
+        minPQ.changePriority(1,10);
+        Integer[] heap = new Integer[minPQ.size()+1];
+        heap[0]=0;
+        int size = minPQ.size();
+        for (int i = 0 ; i< size; i++) {
+            heap[i+1] = minPQ.getSmallest();
+            minPQ.removeSmallest();
+        }
+        printFancyHeapDrawing(heap);
     }
 }
