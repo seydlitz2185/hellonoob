@@ -51,6 +51,14 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
         return items.remove(minInd).getItem();
     }
 
+    public double removeSmallestForTest() {
+        if (size() == 0) {
+            throw new NoSuchElementException("PQ is empty");
+        }
+        int minInd = indOf(getSmallest());
+        return items.remove(minInd).getPriority();
+    }
+
     @Override
     public void changePriority(T item, double priority) {
         if (contains(item) == false) {
