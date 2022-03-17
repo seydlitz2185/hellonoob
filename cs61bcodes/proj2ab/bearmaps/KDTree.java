@@ -83,7 +83,7 @@ public class KDTree {
         int badSide = !isGoalLessThanN ? leftChild(index): rightChild(index);
         flag = Math.abs(flag-1);
         best = nearestHelper(goodSide, flag,goal,best);
-
+        /**MAX_SEEDS = 100000 will check bad side*/
         Point vertical = dimension ? new Point(n.getX(),goal.getY())
                 : new Point(goal.getX(),n.getY());
         boolean badSideStillHaveSomethingGood = Point.distance(
