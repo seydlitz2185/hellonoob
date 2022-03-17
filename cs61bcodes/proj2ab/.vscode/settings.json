@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/Users/stevenyu/Documents/TextMate/lab1/library-sp19/javalib/**/*.jar"
+    ]
+}

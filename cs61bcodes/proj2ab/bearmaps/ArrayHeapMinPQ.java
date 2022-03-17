@@ -157,7 +157,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
         PriorityNode node =  items.get(index);
         node.setPriority(priority);
         sink(index);
-
     }
 
     private class PriorityNode implements Comparable<PriorityNode> {
