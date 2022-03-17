@@ -14,7 +14,7 @@ public class KDTreeTest {
     double[] ySeeds;
     List<Point> points;
     long start,end;
-    int MAX_SEEDS = 10000;
+    int MAX_SEEDS = 1000000;
     KDTree kdt;
     NaivePointSet nps;
     Point goal ;
@@ -41,12 +41,13 @@ public class KDTreeTest {
         Point bestNps = nps.nearest(goal.getX(),goal.getY());
         end = System.currentTimeMillis();
         System.out.println("naivePointSet total time elapsed: " + (end - start)/1000.0 +  " seconds.");
-        System.out.println("bestNps: "+bestNps.toString());
+        System.out.println("bestNps: "+bestNps.toString()+", dist: "+Point.distance(bestNps,goal));
         start = System.currentTimeMillis();
         Point bestKdt = kdt.nearest(goal.getX(),goal.getY());
         end = System.currentTimeMillis();
         System.out.println("KDTree total time elapsed: " + (end - start)/1000.0 +  " seconds.");
-        System.out.println("bestKdt: "+bestKdt.toString());
+        System.out.println("bestKdt: "+bestKdt.toString()+", dist: "+Point.distance(bestKdt,goal));
+        assertEquals(bestKdt,bestNps);
     }
 
 }

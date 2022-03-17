@@ -62,11 +62,6 @@ public class KDTree {
     int rightChild(int n){
         return n*2+2;
     }
-    /**This func is worse than using a flag*/
-    /**int dimension(int index){
-        return (int)((Math.log(index+1)/Math.log(2)) % 2);
-    }
-    */
 
     public Point nearest(double x, double y){
         Point goal = new Point(x,y);
@@ -75,7 +70,7 @@ public class KDTree {
     }
 
     private Point nearestHelper(int index,int flag, Point goal , Point best){
-        if(index > kdTree.size() ){return best;}
+        if(index > kdTree.size() || kdTree.get(index) == null ){return best;}
         Point n = kdTree.get(index);
         boolean dimension = flag == 0 ;
         double ngDist = Point.distance(n,goal);
@@ -89,9 +84,12 @@ public class KDTree {
         flag = Math.abs(flag-1);
         best = nearestHelper(goodSide, flag,goal,best);
 
-        double badSideStillHaveSomethingGood = dimension ? goal.getX() : goal.getY();
-        double pruningRule = dimension ? n.getX() : n.getY();
-        if(badSideStillHaveSomethingGood == pruningRule){
+        Point vertical = dimension ? new Point(n.getX(),goal.getY())
+                : new Point(goal.getX(),n.getY());
+        boolean badSideStillHaveSomethingGood = Point.distance(
+                vertical,goal) < bgDist ;
+
+        if(badSideStillHaveSomethingGood){
             best = nearestHelper(badSide,flag,goal,best);
         }
 

@@ -8,17 +8,31 @@ import java.util.List;
  */
 public class NaivePointSet implements PointSet{
     private List<Point> naivePointSet ;
+    private int size;
     public NaivePointSet(List<Point> points) {
         naivePointSet = points;
+        size = points.size();
     }
 
     @Override
     public Point nearest(double x, double y) {
         Point goal = new Point(x,y);
         Point best = naivePointSet.get(0);
+        for (int i = 0; i < size; i++ ){
+            Point n = naivePointSet.get(i);
+            double nGDist = Point.distance(n,goal);
+            double bGDist = Point.distance(best,goal);
+            best = (nGDist < bGDist) ? n : best;
+        }
+        return best;
+    }
+    /** Stack overflow when MAX_SEEDS = 100000, bad
+    @Override
+    public Point nearest(double x, double y) {
+        Point goal = new Point(x,y);
+        Point best = naivePointSet.get(0);
         return nearestHelper(0,goal,best);
     }
-
     private Point nearestHelper(int index, Point goal, Point best){
         if(index >= naivePointSet.size()){return best;}
         Point n = naivePointSet.get(index);
@@ -28,7 +42,7 @@ public class NaivePointSet implements PointSet{
         index++;
         return nearestHelper(index,goal,best);
     }
-
+    */
     public static void main(String[] args){
         Point p1 = new Point(1.1, 2.2); // constructs a Point with x = 1.1, y = 2.2
         Point p2 = new Point(3.3, 4.4);
