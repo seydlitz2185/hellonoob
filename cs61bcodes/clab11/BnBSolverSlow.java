@@ -8,27 +8,36 @@ import java.util.List;
  * Given a list of Bears and a list of Beds, create lists of the same Bears and Beds where the ith Bear is the same
  * size as the ith Bed.
  */
-public class BnBSolver {
+public class BnBSolverSlow {
+    List<Pair> pairs;
     List<Bear> solvedBears;
     List<Bed> solvedBeds;
     /**runtime should be NlogN,no sorting on bears or beds*/
-    public BnBSolver(List<Bear> bears, List<Bed> beds) {
-        solvedBears = new ArrayList<>();
-        solvedBeds = new ArrayList<>();
+    public BnBSolverSlow(List<Bear> bears, List<Bed> beds) {
+        pairs = new ArrayList<>();
+
         Bear br = bears.remove(0);
         List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
-        BnBAppender(br,less,greater,beds);
-        BnBSolverHelper(bears,less,greater);
-
-
+        for (int i =0 ;i<beds.size();i++){
+            Bed bd = beds.get(i);
+            if(br.compareTo(bd) ==0){
+                pairs.add(new Pair(br,bd));
+                continue;
+            }
+            if(br.compareTo(bd)>0){
+                less.add(bd);
+            }else {
+                greater.add(bd);
+            }
+        }
+        BnBSolverHelper(pairs,bears,less,greater);
     }
-    private void BnBAppender(Bear br,List<Bed> less,List<Bed> greater,List<Bed> goodSide){
+    private void BnBAppender(List<Pair> pairs,Bear br,List<Bed> less,List<Bed> greater,List<Bed> goodSide){
         int size = goodSide.size();
         for (int i =0 ; i< size;i++){
             Bed bd = goodSide.get(i);
             if(br.compareTo(bd) ==0){
-                solvedBears.add(br);
-                solvedBeds.add(bd);
+                pairs.add(new Pair(br,bd));
                 continue;
             }
             if(br.compareTo(bd)>0){
@@ -39,17 +48,17 @@ public class BnBSolver {
         }
     }
 
-    private void BnBSolverHelper(List<Bear> bears ,List<Bed> lessSide, List<Bed> greaterSide){
+    private void BnBSolverHelper(List<Pair> pairs,List<Bear> bears ,List<Bed> lessSide, List<Bed> greaterSide){
         while (!bears.isEmpty()) {
             Bear br = bears.remove(0);
             List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
-            Bed preBed = solvedBeds.get(solvedBeds.size() - 1);
+            Bed preBed = (Bed) pairs.get(pairs.size() - 1).second();
             int size;
             if (br.compareTo(preBed) < 0) {
-                BnBAppender( br, less, greater, lessSide);
+                BnBAppender(pairs, br, less, greater, lessSide);
                 greater.addAll(greaterSide);
             } else {
-                BnBAppender(br, less, greater, greaterSide);
+                BnBAppender(pairs, br, less, greater, greaterSide);
                 less.addAll(lessSide);
             }
             lessSide = less;
@@ -65,7 +74,11 @@ public class BnBSolver {
      */
     public List<Bear> solvedBears() {
         // TODO: Fix me.
-
+        solvedBears = new ArrayList<>();
+        for (Pair p: pairs
+             ) {
+            solvedBears.add((Bear) p.first());
+        }
         return solvedBears;
     }
 
@@ -74,7 +87,11 @@ public class BnBSolver {
      */
     public List<Bed> solvedBeds() {
         // TODO: Fix me.
-
+        solvedBeds = new ArrayList<>();
+        for (Pair p: pairs
+        ) {
+            solvedBeds.add((Bed) p.second());
+        }
         return solvedBeds;
     }
 }
