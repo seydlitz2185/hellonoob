@@ -1,4 +1,3 @@
-import edu.princeton.cs.algs4.Queue;
 
 public class QuickSort {
     /**
@@ -57,7 +56,22 @@ public class QuickSort {
     private static <Item extends Comparable> void partition(
             Queue<Item> unsorted, Item pivot,
             Queue<Item> less, Queue<Item> equal, Queue<Item> greater) {
-        // Your code here!
+        // 3 Scan Approach
+        for (Item i:unsorted) {
+            if (pivot.compareTo(i)>0){
+                less.enqueue(i);
+            }
+        }
+        for (Item i:unsorted) {
+            if (pivot.compareTo(i)==0){
+                equal.enqueue(i);
+            }
+        }
+        for (Item i:unsorted) {
+            if (pivot.compareTo(i)<0){
+                greater.enqueue(i);
+            }
+        }
     }
 
     /**
@@ -69,6 +83,25 @@ public class QuickSort {
     public static <Item extends Comparable> Queue<Item> quickSort(
             Queue<Item> items) {
         // Your code here!
+        Queue<Item> less = new Queue<>(),equal = new Queue<>(),greater = new Queue<>();
+        if(items.size()>1){
+            partition(items,getRandomItem(items),less,equal,greater);
+            less = quickSort(less);
+            equal = quickSort(equal);
+            greater = quickSort(greater);
+        }else {
+            return items;
+        }
+        items = new Queue<>();
+        for (Item i: less) {
+            items.enqueue(i);
+        }
+        for (Item i: equal) {
+            items.enqueue(i);
+        }
+        for (Item i: greater) {
+            items.enqueue(i);
+        }
         return items;
     }
 }
