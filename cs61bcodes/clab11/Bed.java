@@ -11,6 +11,7 @@ public class Bed extends HiddenComparable implements Comparable<Bear> {
     /**
      * Compares the size of this and the other Bear object.
      */
+    @Override
     public int compareTo(Bear other) {
         return Integer.compare(getSize(), other.getSize());
     }
@@ -18,6 +19,7 @@ public class Bed extends HiddenComparable implements Comparable<Bear> {
     /**
      * String representation of a Bed. For debugging purposes only.
      */
+    @Override
     public String toString() {
         return "Bed(" + getSize() + ")";
     }

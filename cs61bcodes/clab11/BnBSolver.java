@@ -9,17 +9,77 @@ import java.util.List;
  * size as the ith Bed.
  */
 public class BnBSolver {
-
+    List<Pair> pairs;
+    List<Bear> solvedBears;
+    List<Bed> solvedBeds;
+    /**runtime should be NlogN,no sorting on bears or beds*/
     public BnBSolver(List<Bear> bears, List<Bed> beds) {
-        // TODO: Fix me.
+        pairs = new ArrayList<>();
+
+        Bear br = bears.remove(0);
+        List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
+        for (int i =0 ;i<beds.size();i++){
+            Bed bd = beds.get(i);
+            if(br.compareTo(bd) ==0){
+                pairs.add(new Pair(br,bd));
+                continue;
+            }
+            if(br.compareTo(bd)>0){
+                less.add(bd);
+            }else {
+                greater.add(bd);
+            }
+        }
+        BnBSolverHelper(pairs,bears,less,greater);
     }
+    private void BnBAppender(List<Pair> pairs,Bear br,List<Bed> less,List<Bed> greater,List<Bed> goodSide){
+        int size = goodSide.size();
+        for (int i =0 ; i< size;i++){
+            Bed bd = goodSide.get(i);
+            if(br.compareTo(bd) ==0){
+                pairs.add(new Pair(br,bd));
+                continue;
+            }
+            if(br.compareTo(bd)>0){
+                less.add(bd);
+            }else {
+                greater.add(bd);
+            }
+        }
+    }
+
+    private void BnBSolverHelper(List<Pair> pairs,List<Bear> bears ,List<Bed> lessSide, List<Bed> greaterSide){
+        while (!bears.isEmpty()) {
+            Bear br = bears.remove(0);
+            List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
+            Bed preBed = (Bed) pairs.get(pairs.size() - 1).second();
+            int size;
+            if (br.compareTo(preBed) < 0) {
+                BnBAppender(pairs, br, less, greater, lessSide);
+                greater.addAll(greaterSide);
+            } else {
+                BnBAppender(pairs, br, less, greater, greaterSide);
+                less.addAll(lessSide);
+            }
+            lessSide = less;
+            greaterSide = greater;
+        }
+        return;
+    }
+
+
 
     /**
      * Returns List of Bears such that the ith Bear is the same size as the ith Bed of solvedBeds().
      */
     public List<Bear> solvedBears() {
         // TODO: Fix me.
-        return null;
+        solvedBears = new ArrayList<>();
+        for (Pair p: pairs
+             ) {
+            solvedBears.add((Bear) p.first());
+        }
+        return solvedBears;
     }
 
     /**
@@ -27,6 +87,11 @@ public class BnBSolver {
      */
     public List<Bed> solvedBeds() {
         // TODO: Fix me.
-        return null;
+        solvedBeds = new ArrayList<>();
+        for (Pair p: pairs
+        ) {
+            solvedBeds.add((Bed) p.second());
+        }
+        return solvedBeds;
     }
 }

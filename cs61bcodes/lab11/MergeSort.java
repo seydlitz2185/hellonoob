@@ -100,9 +100,11 @@ public class MergeSort {
         for (int i = 0; i<bound2;i++){
             q2.enqueue(arrQ.dequeue().dequeue());
         }
-        if(!q1.isEmpty() && !q2.isEmpty()){
+        if(!q1.isEmpty()){
             q1= mergeSort(q1);
-            q2= mergeSort(q2);
+        }
+        if(!q2.isEmpty()){
+            q2= mergeSort(q2);    
         }
             items= mergeSortedQueues(q1,q2);
             return items;
