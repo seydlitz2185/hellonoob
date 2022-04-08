@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,46 +16,35 @@ public class BnBSolver {
     public BnBSolver(List<Bear> bears, List<Bed> beds) {
         solvedBears = new ArrayList<>();
         solvedBeds = new ArrayList<>();
-        Bear br = bears.remove(0);
-        List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
-        BnBAppender(br,less,greater,beds);
-        BnBSolverHelper(bears,less,greater);
+        int cnt=0;
+        while (cnt<bears.size()){
+            Bear bear = bears.get(cnt++);
+            BnBSolverHelper(bear,beds);
 
+        }
 
     }
-    private void BnBAppender(Bear br,List<Bed> less,List<Bed> greater,List<Bed> goodSide){
-        int size = goodSide.size();
-        for (int i =0 ; i< size;i++){
-            Bed bd = goodSide.get(i);
-            if(br.compareTo(bd) ==0){
-                solvedBears.add(br);
-                solvedBeds.add(bd);
-                continue;
-            }
-            if(br.compareTo(bd)>0){
-                less.add(bd);
-            }else {
-                greater.add(bd);
-            }
-        }
-    }
 
-    private void BnBSolverHelper(List<Bear> bears ,List<Bed> lessSide, List<Bed> greaterSide){
-        while (!bears.isEmpty()) {
-            Bear br = bears.remove(0);
-            List<Bed> less = new ArrayList<>(), greater = new ArrayList<>();
-            Bed preBed = solvedBeds.get(solvedBeds.size() - 1);
-            int size;
-            if (br.compareTo(preBed) < 0) {
-                BnBAppender( br, less, greater, lessSide);
-                greater.addAll(greaterSide);
-            } else {
-                BnBAppender(br, less, greater, greaterSide);
-                less.addAll(lessSide);
+
+    private void BnBSolverHelper(Bear bear, List<Bed> beds){
+        int l = 0;
+        int size = beds.size();
+        int r = size-1;
+        Bear pivot = bear;
+        while (l!=r){
+            while (pivot.compareTo(beds.get(l))>0){
+                l++;
             }
-            lessSide = less;
-            greaterSide = greater;
+            while (pivot.compareTo(beds.get(r))<0){
+                r--;
+            }
+            Bed temp = beds.get(l);
+            beds.set(l,beds.get(r)) ;
+            beds.set(r,temp) ;
         }
+        solvedBears.add(bear);
+        solvedBeds.add(beds.get(l));
+        beds.remove(l);
         return;
     }
 
