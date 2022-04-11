@@ -11,7 +11,7 @@ public class PalindromeFinder {
           win
          */
         //In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
-        In in = new In("/Users/stevenyu/Desktop/lab1-checkoff/library-sp19/data/words.txt");
+        In in = new In("/Users/stevenyu/Documents/TextMate/lab1/library-sp19/data/words.txt");
         int palindromecounter = 0;
         int max = 0;
 
@@ -45,7 +45,7 @@ public class PalindromeFinder {
     public static void main(String[] args) {
 
         //In in = new In("E:\\lab1\\library-sp19\\data\\words.txt");
-        In in = new In("/Users/stevenyu/Desktop/lab1-checkoff/library-sp19/data/words.txt");
+        In in = new In("/Users/stevenyu/Documents/TextMate/lab1/library-sp19/data/words.txt");
         int wordLength = in.readLine().length();
         int temp;
         int maxN=0;
