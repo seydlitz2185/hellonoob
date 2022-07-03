@@ -13,6 +13,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
          itemsIndexMap = new HashMap<>();
          size = 0;
      }
+    public ArrayHeapMinPQ (List l, HashMap m){
+        items = (ArrayList)l;
+        //       itemsArr =  new ArrayHeapMinPQ.PriorityNode[10];
+        itemsIndexMap = m;
+        size = 0;
+    }
 /**
  * Your getSmallest, contains, size and changePriority methods must run in O(log(n)) time
  * Your add and removeSmallest must run in O(log(n)) average time*/
@@ -86,7 +92,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
     public void add(T item, double priority) {
         //resize();
 
-        if(contains(item)){throw new IllegalArgumentException();}
+         if(contains(item)){throw new IllegalArgumentException();}
         PriorityNode node = new PriorityNode(item, priority);
         itemsIndexMap.put(node.getItem(),size());
         items.add(node);
