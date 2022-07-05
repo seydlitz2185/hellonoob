@@ -14,7 +14,6 @@ public class DemoIntegerHopPuzzleSolution {
     public static void main(String[] args) {
         int start = 17;
         int goal = 111;
-
         IntegerHopGraph ahg = new IntegerHopGraph();
 
         ShortestPathsSolver<Integer> solver = new AStarSolver<>(ahg, start, goal, 1000);

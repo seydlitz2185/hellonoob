@@ -12,6 +12,7 @@ import bearmaps.hw4.SolutionPrinter;
  * Created by hug.
  */
 public class DemoRunSeveralPuzzles {
+
     private static String[] basicPuzzles = {"BasicPuzzle1.txt", "BasicPuzzle2.txt",
         "BasicPuzzle3.txt", "BasicPuzzle4.txt"};
 
@@ -23,7 +24,7 @@ public class DemoRunSeveralPuzzles {
 
     public static void main(String[] args) {
 
-        String[] puzzleFiles = hardPuzzles;
+        String[] puzzleFiles = basicPuzzles;
 
         System.out.println(puzzleFiles.length + " puzzle files being run.");
         for (int i = 0; i < puzzleFiles.length; i += 1) {

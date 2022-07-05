@@ -4,10 +4,7 @@ import bearmaps.proj2ab.ArrayHeapMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
     private SolverOutcome outcome;
@@ -16,70 +13,94 @@ public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
     private double timeSpent;
     private int numStatesExplored;
     private int hToEnd;
-    private double distToEnd;
+    //private double distToEnd;
+    private Map<Vertex,Vertex> edgeTo;
     private Map<Vertex, Double> distMap;
     private ArrayHeapMinPQ<Vertex> fringe;
-    Map<Vertex,Integer> hMap;
-
+    private Map<Vertex,Integer> hMap;
     public void relax(WeightedEdge<Vertex> e){
         Vertex p = e.from();
         Vertex q = e.to();
         double w = e.weight();
         double distToP = distMap.get(p);
         double distToQ = distToP+w;
-        int hToQ= Math.abs(hToEnd-hMap.get(q));
+        //int hToQ= hMap.get(p);
         /**首先检查distMap是否包含q*/
         if(distMap.containsKey(q)){
             if(distToQ <  distMap.get(q)){
                 if(fringe.contains(q)) {
-                    fringe.changePriority(q, hToQ);
+                    //fringe.changePriority(q,distToQ + hToQ);
+                    fringe.changePriority(q, distToQ);
                 }else {
-                    fringe.add(q,distToQ + hToQ);
+                    //solution.add(q);
+                   // fringe.add(q,distToQ + hToQ);
+                    fringe.add(q,distToQ);
                 }
                 distMap.replace(q,distToQ);
+                edgeTo.replace(q,p);
             }
-            solution.remove(q);
-        }else {distMap.put(q,distToQ);fringe.add(q,distToQ + hToQ);}
+           // solution.remove(q);
+        }else {
+            distMap.put(q,distToQ);
+            //hMap.put(q,hMap.get(p));
+            //fringe.add(q,distToQ + hToQ);
+            fringe.add(q,distToQ);
+            edgeTo.put(q,p);
+        }
 
 
     }
 
     public  AStarSolver(AStarGraph<Vertex> input, Vertex start, Vertex end, double timeout) {
+        int default_bfs_dist = 0;
         Stopwatch sw = new Stopwatch();
         List<WeightedEdge<Vertex>> neighborEdges;
         fringe = new ArrayHeapMinPQ<>() ;
         distMap = new HashMap<>();
-        hMap = BFS(input,start);
+        //hMap = new HashMap<>();
+        edgeTo= new HashMap<>();
+        /**Don't use BFS , Try a simple counter here*/
+        //hMap.put(start,default_bfs_dist);
         solution=new ArrayList<>();
-        if(hMap.get(end)!=null){
-            hToEnd = hMap.get(end);
+            //hToEnd = hMap.get(start);
             fringe.add(start,hToEnd);
             distMap.put(start,0.0);
-            while (fringe.size()>0 && sw.elapsedTime()<=timeout ){
-                Vertex v  = fringe.removeSmallest();
-                solution.add(v);
-                if (v.equals(end)){
+            while (fringe.size()>0 && sw.elapsedTime()<=timeout ) {
+                Vertex v = fringe.removeSmallest();
+                numStatesExplored+=1;
+                //System.out.println(v);
+                //solution.add(v);
+                if (v.equals(end)) {
+                    Stack<Vertex> solutionStack = new Stack<>();
+                    Vertex target = end;
+                    solutionStack.push(target);
+                    while (!target.equals(start) && target !=null){
+                        target = edgeTo.get(target);
+                        solutionStack.push(target);
+                    }
+                    while (!solutionStack.empty()){
+                        solution.add(solutionStack.pop());
+                    }
                     solutionWeight = distMap.get(end);
-                    numStatesExplored=solution.size()-1;
+                    //numStatesExplored = solution.size() - 1;
                     outcome = SolverOutcome.SOLVED;
                     timeSpent = sw.elapsedTime();
                     return;
                 }
                 neighborEdges = input.neighbors(v);
-                if(neighborEdges!=null) {
+                if (neighborEdges != null) {
                     for (WeightedEdge<Vertex> e : neighborEdges) {
                         relax(e);
                     }
                 }
+                if (sw.elapsedTime() >= timeout) {
+                    outcome = SolverOutcome.TIMEOUT;
+                    timeSpent = timeout;
+                }
             }
-            if(sw.elapsedTime()>=timeout){
-                outcome = SolverOutcome.TIMEOUT;
-                timeSpent = timeout;
-            }
-        }else {
-        outcome = SolverOutcome.UNSOLVABLE;
-        timeSpent = sw.elapsedTime();
-        }
+            outcome = SolverOutcome.UNSOLVABLE;
+            timeSpent = sw.elapsedTime();
+
 
     }
 

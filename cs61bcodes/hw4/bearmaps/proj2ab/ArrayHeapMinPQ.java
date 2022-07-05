@@ -1,6 +1,8 @@
 package bearmaps.proj2ab;
 import java.util.*;
 
+import static edu.princeton.cs.introcs.StdOut.print;
+
 
 public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
      private ArrayList<PriorityNode> items;
@@ -123,10 +125,10 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
         //resize();
         PriorityNode smallest = items.get(0);
         T result = smallest.getItem();
+        itemsIndexMap.remove(result);
         size--;
         smallest.item = items.get(size()).getItem();
         smallest.priority = (items.get(size()).getPriority());
-        itemsIndexMap.remove(smallest);
         itemsIndexMap.replace(items.get(size()).getItem(),0);
         items.remove(size());
         sink(0);
