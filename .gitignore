@@ -49,3 +49,6 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.lnk
+library-sp19/javalib/proj2c/
+library-sp19/data/proj2c*
+

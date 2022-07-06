@@ -6,13 +6,16 @@ import java.util.NoSuchElementException;
 
 import static bearmaps.PrintHeapDemo.printFancyHeapDrawing;
 
-/** A very basic implementation of the ExtrinsicMinPQ.
- *  Operations have very poor performance, but it's at least
- *  correct, with one exception: The add method
- *  should throw an exception if the item already exists,
- *  but doing so makes the add method painfully slow to the
- *  point where this class is very difficult to use for testing.
- *  @author Matt Owen @since 03-11-19 */
+/**
+ * A very basic implementation of the ExtrinsicMinPQ.
+ * Operations have very poor performance, but it's at least
+ * correct, with one exception: The add method
+ * should throw an exception if the item already exists,
+ * but doing so makes the add method painfully slow to the
+ * point where this class is very difficult to use for testing.
+ *
+ * @author Matt Owen @since 03-11-19
+ */
 public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     private ArrayList<PriorityNode> items;
@@ -21,8 +24,9 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
         items = new ArrayList<>();
     }
 
-    /** Note this method does not throw the proper exception,
-     *  otherwise it is painfully slow (linear time).
+    /**
+     * Note this method does not throw the proper exception,
+     * otherwise it is painfully slow (linear time).
      */
     @Override
     public void add(T item, double priority) {
@@ -122,21 +126,21 @@ public class NaiveMinPQ<T> implements ExtrinsicMinPQ<T> {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         NaiveMinPQ<Integer> minPQ = new NaiveMinPQ();
-        minPQ.add(19,19);
-        minPQ.add(3,3);
-        minPQ.add(4,4);
-        minPQ.add(9,9);
-        minPQ.add(11,11);
-        minPQ.add(12,12);
-        minPQ.add(1,1);
-        minPQ.changePriority(1,10);
-        Integer[] heap = new Integer[minPQ.size()+1];
-        heap[0]=0;
+        minPQ.add(19, 19);
+        minPQ.add(3, 3);
+        minPQ.add(4, 4);
+        minPQ.add(9, 9);
+        minPQ.add(11, 11);
+        minPQ.add(12, 12);
+        minPQ.add(1, 1);
+        minPQ.changePriority(1, 10);
+        Integer[] heap = new Integer[minPQ.size() + 1];
+        heap[0] = 0;
         int size = minPQ.size();
-        for (int i = 0 ; i< size; i++) {
-            heap[i+1] = minPQ.getSmallest();
+        for (int i = 0; i < size; i++) {
+            heap[i + 1] = minPQ.getSmallest();
             minPQ.removeSmallest();
         }
         printFancyHeapDrawing(heap);

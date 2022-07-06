@@ -1,65 +1,57 @@
-package bearmaps;
-import bearmaps.ExtrinsicMinPQ;
-
+package bearmaps.proj2ab;
 import java.util.*;
 
 import static edu.princeton.cs.introcs.StdOut.print;
 
 
-public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
-    private ArrayList<PriorityNode> items;
-    //  private PriorityNode[] itemsArr;
-    private Map<T, Integer> itemsIndexMap;
-    private int size;
-
-    public ArrayHeapMinPQ() {
-        items = new ArrayList<>();
-        //       itemsArr =  new ArrayHeapMinPQ.PriorityNode[10];
-        itemsIndexMap = new HashMap<>();
-        size = 0;
-    }
-
-    public ArrayHeapMinPQ(List l, HashMap m) {
-        items = (ArrayList) l;
+public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
+     private ArrayList<PriorityNode> items;
+   //  private PriorityNode[] itemsArr;
+     private Map<T,Integer> itemsIndexMap;
+     private int size;
+     public ArrayHeapMinPQ (){
+         items = new ArrayList<>();
+  //       itemsArr =  new ArrayHeapMinPQ.PriorityNode[10];
+         itemsIndexMap = new HashMap<>();
+         size = 0;
+     }
+    public ArrayHeapMinPQ (List l, HashMap m){
+        items = (ArrayList)l;
         //       itemsArr =  new ArrayHeapMinPQ.PriorityNode[10];
         itemsIndexMap = m;
         size = 0;
     }
+/**
+ * Your getSmallest, contains, size and changePriority methods must run in O(log(n)) time
+ * Your add and removeSmallest must run in O(log(n)) average time*/
 
-    /**
-     * Your getSmallest, contains, size and changePriority methods must run in O(log(n)) time
-     * Your add and removeSmallest must run in O(log(n)) average time
-     */
-
-    private void swap(int n, int parent) {
-        PriorityNode tempNode = new PriorityNode(items.get(n).item, items.get(n).priority);
-        PriorityNode tempParent = new PriorityNode(items.get(parent).item, items.get(parent).priority);
-        itemsIndexMap.replace(tempNode.getItem(), n, parent);
-        itemsIndexMap.replace(tempParent.getItem(), parent, n);
+    private void swap(int n, int parent){
+        PriorityNode tempNode = new PriorityNode(items.get(n).item,items.get(n).priority);
+        PriorityNode tempParent =  new PriorityNode(items.get(parent).item,items.get(parent).priority);
+        itemsIndexMap.replace(tempNode.getItem(),n,parent);
+        itemsIndexMap.replace(tempParent.getItem(),parent,n);
         items.remove(n);
         items.add(n, tempParent);
         items.remove(parent);
-        items.add(parent, tempNode);
+        items.add(parent,tempNode);
 
 //        PriorityNode temp = itemsArr[parent];
 //        itemsArr[parent] = itemsArr[n];
 //        itemsArr[n] = temp;
     }
 
-    void swim(int n) {
+    void swim(int n){
         int parent = parent(n);
-        if (items.get(parent).compareTo(items.get(n)) > 0) {
-            swap(n, parent);
+        if(items.get(parent).compareTo(items.get(n)) >0){
+            swap(n,parent);
             swim(parent);
         }
     }
 
-    void sink(int parent) {
+    void sink(int parent){
         int youngestChild = leftChild(parent);
-        if (youngestChild == parent) {
-            return;
-        }
-        if (rightChild(parent) != parent) {
+        if(youngestChild == parent){return;}
+        if(rightChild(parent) != parent) {
             if (items.get(rightChild(parent)).compareTo(items.get(youngestChild)) < 0) {
                 youngestChild = rightChild(parent);
             }
@@ -70,23 +62,18 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         }
     }
 
-    int parent(int n) {
+    int parent(int n){
         return (n - 1) / 2;
     }
-
     /*return index of child node*/
-    int leftChild(int n) {
-        if (n * 2 + 1 >= size()) {
-            return n;
-        }
-        return n * 2 + 1;
+    int leftChild(int n){
+        if(n*2+1>=size()){return n;}
+        return n*2+1;
     }
 
-    int rightChild(int n) {
-        if (n * 2 + 2 >= size()) {
-            return n;
-        }
-        return n * 2 + 2;
+    int rightChild(int n){
+        if(n*2+2>=size()){return n;}
+        return n*2+2;
     }
 
     /*void resize(){
@@ -107,11 +94,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     public void add(T item, double priority) {
         //resize();
 
-        if (contains(item)) {
-            throw new IllegalArgumentException();
-        }
+         if(contains(item)){throw new IllegalArgumentException();}
         PriorityNode node = new PriorityNode(item, priority);
-        itemsIndexMap.put(node.getItem(), size());
+        itemsIndexMap.put(node.getItem(),size());
         items.add(node);
 //        itemsArr[size()] = node;
         swim(size());
@@ -148,7 +133,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         items.remove(size());
         sink(0);
 
-        return result;
+        return result ;
     }
 
     public Double removeSmallestForTest() {
@@ -158,12 +143,12 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
         size--;
         smallest.item = items.get(size()).getItem();
         smallest.priority = (items.get(size()).getPriority());
-        itemsIndexMap.remove(result);
-        //itemsIndexMap.replace(items.get(size()).getItem(), 0);
+        itemsIndexMap.remove(smallest);
+        itemsIndexMap.replace(items.get(size()).getItem(),0);
         items.remove(size());
         sink(0);
 
-        return result;
+        return result ;
     }
 
     @Override
@@ -173,11 +158,9 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
 
     @Override
     public void changePriority(T item, double priority) {
-        if (!contains(item)) {
-            throw new IllegalArgumentException();
-        }
-        int index = itemsIndexMap.get(item.hashCode());
-        PriorityNode node = items.get(index);
+        if(!contains(item)){throw new IllegalArgumentException();}
+        int index = itemsIndexMap.get(item.hashCode()) ;
+        PriorityNode node =  items.get(index);
         node.setPriority(priority);
         sink(index);
     }
@@ -228,6 +211,6 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ<T> {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
     }
 }
