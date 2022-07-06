@@ -1,12 +1,18 @@
 package bearmaps.hw4;
 
+import bearmaps.hw4.AStarGraph;
+import bearmaps.hw4.ShortestPathsSolver;
+import bearmaps.hw4.SolverOutcome;
+import bearmaps.hw4.WeightedEdge;
+import bearmaps.hw4.slidingpuzzle.Board;
+import bearmaps.hw4.slidingpuzzle.BoardGraph;
 import bearmaps.proj2ab.ArrayHeapMinPQ;
 import edu.princeton.cs.algs4.Stopwatch;
 
 import javax.swing.*;
 import java.util.*;
 
-public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
+public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex> {
     private SolverOutcome outcome;
     private double solutionWeight;
     private List<Vertex> solution;
@@ -18,33 +24,35 @@ public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
     private Map<Vertex, Double> distMap;
     private ArrayHeapMinPQ<Vertex> fringe;
     private Map<Vertex,Integer> hMap;
-    public void relax(WeightedEdge<Vertex> e){
+    public void relax(WeightedEdge<Vertex> e,AStarGraph<Vertex>input,Vertex end){
         Vertex p = e.from();
         Vertex q = e.to();
         double w = e.weight();
         double distToP = distMap.get(p);
         double distToQ = distToP+w;
-        //int hToQ= hMap.get(p);
         /**首先检查distMap是否包含q*/
         if(distMap.containsKey(q)){
             if(distToQ <  distMap.get(q)){
                 if(fringe.contains(q)) {
-                    //fringe.changePriority(q,distToQ + hToQ);
-                    fringe.changePriority(q, distToQ);
+                    int hToQ= (int) input.estimatedDistanceToGoal(q,end);
+                    fringe.changePriority(q,distToQ + hToQ);
                 }else {
-                    //solution.add(q);
-                   // fringe.add(q,distToQ + hToQ);
-                    fringe.add(q,distToQ);
+                    int hToQ= (int) input.estimatedDistanceToGoal(q,end);
+                    fringe.add(q,distToQ + hToQ);
+
                 }
                 distMap.replace(q,distToQ);
                 edgeTo.replace(q,p);
             }
-           // solution.remove(q);
+            // solution.remove(q);
         }else {
             distMap.put(q,distToQ);
-            //hMap.put(q,hMap.get(p));
+            int hToQ= (int) input.estimatedDistanceToGoal( q,end);
+            hMap.put(q,hToQ);
+            fringe.add(q,distToQ+hToQ);
+
             //fringe.add(q,distToQ + hToQ);
-            fringe.add(q,distToQ);
+
             edgeTo.put(q,p);
         }
 
@@ -57,49 +65,51 @@ public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
         List<WeightedEdge<Vertex>> neighborEdges;
         fringe = new ArrayHeapMinPQ<>() ;
         distMap = new HashMap<>();
-        //hMap = new HashMap<>();
+        hMap = new HashMap<>();
         edgeTo= new HashMap<>();
         /**Don't use BFS , Try a simple counter here*/
-        //hMap.put(start,default_bfs_dist);
+        hMap.put(start,(int) input.estimatedDistanceToGoal(start,end));
+
+
         solution=new ArrayList<>();
-            //hToEnd = hMap.get(start);
-            fringe.add(start,hToEnd);
-            distMap.put(start,0.0);
-            while (fringe.size()>0 && sw.elapsedTime()<=timeout ) {
-                Vertex v = fringe.removeSmallest();
-                numStatesExplored+=1;
-                //System.out.println(v);
-                //solution.add(v);
-                if (v.equals(end)) {
-                    Stack<Vertex> solutionStack = new Stack<>();
-                    Vertex target = end;
+        //hToEnd = hMap.get(start);
+        fringe.add(start,hToEnd);
+        distMap.put(start,0.0);
+        while (fringe.size()>0 && sw.elapsedTime()<=timeout ) {
+            Vertex v = fringe.removeSmallest();
+            numStatesExplored+=1;
+            //System.out.println(v);
+            //solution.add(v);
+            if (v.equals(end)) {
+                Stack<Vertex> solutionStack = new Stack<>();
+                Vertex target = end;
+                solutionStack.push(target);
+                while (!target.equals(start) && target !=null){
+                    target = edgeTo.get(target);
                     solutionStack.push(target);
-                    while (!target.equals(start) && target !=null){
-                        target = edgeTo.get(target);
-                        solutionStack.push(target);
-                    }
-                    while (!solutionStack.empty()){
-                        solution.add(solutionStack.pop());
-                    }
-                    solutionWeight = distMap.get(end);
-                    //numStatesExplored = solution.size() - 1;
-                    outcome = SolverOutcome.SOLVED;
-                    timeSpent = sw.elapsedTime();
-                    return;
                 }
-                neighborEdges = input.neighbors(v);
-                if (neighborEdges != null) {
-                    for (WeightedEdge<Vertex> e : neighborEdges) {
-                        relax(e);
-                    }
+                while (!solutionStack.empty()){
+                    solution.add(solutionStack.pop());
                 }
-                if (sw.elapsedTime() >= timeout) {
-                    outcome = SolverOutcome.TIMEOUT;
-                    timeSpent = timeout;
+                solutionWeight = distMap.get(end);
+                numStatesExplored =numStatesExplored - 1;
+                outcome = SolverOutcome.SOLVED;
+                timeSpent = sw.elapsedTime();
+                return;
+            }
+            neighborEdges = input.neighbors(v);
+            if (neighborEdges != null) {
+                for (WeightedEdge<Vertex> e : neighborEdges) {
+                    relax(e,input,end);
                 }
             }
-            outcome = SolverOutcome.UNSOLVABLE;
-            timeSpent = sw.elapsedTime();
+            if (sw.elapsedTime() >= timeout) {
+                outcome = SolverOutcome.TIMEOUT;
+                timeSpent = timeout;
+            }
+        }
+        outcome = SolverOutcome.UNSOLVABLE;
+        timeSpent = sw.elapsedTime();
 
 
     }
@@ -130,7 +140,7 @@ public class AStarSolver<Vertex>implements ShortestPathsSolver<Vertex>{
             curr = fringe.remove(0);
             List<WeightedEdge<Vertex>> neighbours = input.neighbors(curr);
             for (WeightedEdge w:neighbours
-                 ) {
+            ) {
                 Vertex to = (Vertex)w.to();
                 if(bfs.containsKey(to)==false){
                     bfs.put(to,bfs.get(curr)+1);

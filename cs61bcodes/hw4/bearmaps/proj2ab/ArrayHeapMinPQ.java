@@ -129,7 +129,7 @@ public class ArrayHeapMinPQ<T> implements ExtrinsicMinPQ <T> {
         size--;
         smallest.item = items.get(size()).getItem();
         smallest.priority = (items.get(size()).getPriority());
-        itemsIndexMap.replace(items.get(size()).getItem(),0);
+        //itemsIndexMap.replace(items.get(size()).getItem(),0);
         items.remove(size());
         sink(0);
 
