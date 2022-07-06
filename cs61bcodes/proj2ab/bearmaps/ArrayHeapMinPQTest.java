@@ -19,7 +19,7 @@ public class ArrayHeapMinPQTest {
     double[] seeds;
     int[] changes;
     double [] priorities;
-    int MAX_SEEDS = 1000000;
+    int MAX_SEEDS = 100000;
     int MAX_CHANGES = 1000;
     NaiveMinPQ<Integer> naiveMinPQ;
     ArrayHeapMinPQ<Integer> arrayHeapMinPQ;
