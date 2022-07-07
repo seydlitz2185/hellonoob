@@ -1,6 +1,11 @@
 package bearmaps.proj2c;
 
+import bearmaps.hw4.AStarSolver;
+import bearmaps.hw4.WeirdSolver;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,10 +29,10 @@ public class Router {
      */
     public static List<Long> shortestPath(AugmentedStreetMapGraph g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        //long src = g.closest(stlon, stlat);
-        //long dest = g.closest(destlon, destlat);
-        //return new WeirdSolver<>(g, src, dest, 20).solution();
-        return null;
+        long src = g.closest(stlon, stlat);
+        long dest = g.closest(destlon, destlat);
+        return new AStarSolver<>(g, src, dest, 20).solution();
+        //return null;
     }
 
     /**
@@ -40,7 +45,35 @@ public class Router {
      */
     public static List<NavigationDirection> routeDirections(AugmentedStreetMapGraph g, List<Long> route) {
         /* fill in for part IV */
-        return null;
+
+        List<NavigationDirection> navigationDirections = new ArrayList<>();
+        NavigationDirection start = new NavigationDirection();
+        start.direction= 0;
+        start.way = g.name(route.get(0));
+        start.distance = 0;
+        navigationDirections.add(start);
+        int preDirection = start.direction;
+        double distanceCounter = 0;
+        for ( int i = 1; i< route.size()-1;i++) {
+            NavigationDirection temp = new NavigationDirection();
+            temp.way = g.name(route.get(i));
+            double preBearing = NavigationDirection.bearing(g.lon(route.get(i-1)),
+                    g.lon(route.get(i)),g.lat(route.get(i-1)),g.lat(route.get(i)));
+            double currBearing = NavigationDirection.bearing(g.lon(route.get(i)),
+                    g.lon(route.get(i+1)),g.lat(route.get(i)),g.lat(route.get(i+1)));
+            temp.direction = NavigationDirection.getDirection(preBearing,currBearing);
+            temp.distance = 1;
+            if(preDirection == temp.direction){
+                distanceCounter+=temp.distance;
+            }else {
+                preDirection = temp.direction;
+                temp.distance+= distanceCounter;
+                navigationDirections.add(temp);
+            }
+
+        }
+
+        return navigationDirections;
     }
 
     /**
@@ -97,6 +130,7 @@ public class Router {
             this.distance = 0.0;
         }
 
+        @Override
         public String toString() {
             return String.format("%s on %s and continue for %.3f miles.",
                     DIRECTIONS[direction], way, distance);
@@ -232,4 +266,5 @@ public class Router {
             return Math.toDegrees(Math.atan2(y, x));
         }
     }
+
 }
