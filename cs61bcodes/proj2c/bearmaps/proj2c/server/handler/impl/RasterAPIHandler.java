@@ -12,13 +12,14 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static bearmaps.proj2c.utils.Constants.SEMANTIC_STREET_GRAPH;
-import static bearmaps.proj2c.utils.Constants.ROUTE_LIST;
+import static bearmaps.proj2c.utils.Constants.*;
 
 /**
  * Handles requests from the web browser for map images. These images
@@ -87,8 +88,54 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         //System.out.println("yo, wanna know the parameters given by the web browser? They are:");
         //System.out.println(requestParams);
         Map<String, Object> results = new HashMap<>();
-        System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
+        /**System.out.println("Since you haven't implemented RasterAPIHandler.processRequest, nothing is displayed in "
                 + "your browser.");
+         */
+        if((requestParams.get("lrlon") > ROOT_LRLON && requestParams.get("ullon") < ROOT_ULLON) &&
+           (requestParams.get("lrlat") < ROOT_LRLAT && requestParams.get("ullat") > ROOT_ULLAT)){
+            results.put("query_success",false);
+            return results;
+        }
+
+        double lrlon = requestParams.get("lrlon") > ROOT_LRLON ? ROOT_LRLON:requestParams.get("lrlon");
+        double lrlat = requestParams.get("lrlat") < ROOT_LRLAT ? ROOT_LRLAT:requestParams.get("lrlat");
+        double ullon = requestParams.get("ullon") < ROOT_ULLON ? ROOT_ULLON :requestParams.get("ullon");
+        double ullat = requestParams.get("ullat") > ROOT_ULLAT ? ROOT_ULLAT :requestParams.get("ullat");
+
+        double w = requestParams.get("w")*(ullon-lrlon)/(requestParams.get("ullon")-requestParams.get("lrlon"));
+        //Count the requestParams' LonDpp
+        double requestLonDpp =(lrlon-ullon)/w;
+        double imgLonDpp = (ROOT_LRLON-ROOT_ULLON)/TILE_SIZE;
+        int depth = 0;
+        //Get proper Depth
+        while((imgLonDpp-requestLonDpp)>0.0000018){
+            depth += 1;
+            imgLonDpp = imgLonDpp/2;
+        }
+        double blockSizeX = (ROOT_LRLON-ROOT_ULLON)/(Math.pow(2,depth));
+        int xBase =(int) ((ullon-ROOT_ULLON)/blockSizeX);
+        int xBound = xBase+ (int) Math.ceil(((lrlon - (ROOT_ULLON+(xBase+1)*blockSizeX))/blockSizeX));
+        double blockSizeY= (ROOT_ULLAT-ROOT_LRLAT)/(Math.pow(2,depth));
+        int yBase = (int) ((ROOT_ULLAT-ullat)/blockSizeY);
+        int yBound = yBase+ (int) Math.ceil((((ROOT_ULLAT-(yBase+1)*blockSizeY)-lrlat)/blockSizeY));
+
+        double raster_ul_lon = ROOT_ULLON + xBase*blockSizeX;
+        double raster_lr_lon = ROOT_ULLON + (xBound+1)*blockSizeX;
+        double raster_ul_lat = ROOT_ULLAT - yBase*blockSizeY;
+        double raster_lr_lat = ROOT_ULLAT - (yBound+1)*blockSizeY;
+        String[][] render_grid = new String[yBound-yBase+1][xBound-xBase+1];
+        for ( int i = yBase;i <= yBound;i++){
+            for (int j = xBase;j<= xBound;j++ ){
+                render_grid[i-yBase][j-xBase] = "d"+depth+"_x"+j+"_y"+i+".png";
+            }
+        }
+        results.put("render_grid",render_grid);
+        results.put("raster_ul_lon",raster_ul_lon);
+        results.put("raster_lr_lon",raster_lr_lon);
+        results.put("raster_ul_lat",raster_ul_lat);
+        results.put("raster_lr_lat",raster_lr_lat);
+        results.put("depth",depth);
+        results.put("query_success",true);
         return results;
     }
 
