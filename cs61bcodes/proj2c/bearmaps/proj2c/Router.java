@@ -49,11 +49,12 @@ public class Router {
         List<NavigationDirection> navigationDirections = new ArrayList<>();
         NavigationDirection start = new NavigationDirection();
         start.direction= 0;
-        start.way = g.name(route.get(0));
-        start.distance = 0;
-        navigationDirections.add(start);
+        start.way = g.name( route.get(0));
+        start.distance = g.estimatedDistanceToGoal(route.get(0),route.get(1));
+        NavigationDirection pre = start;
         int preDirection = start.direction;
         double distanceCounter = 0;
+        int dirCounter = 0;
         for ( int i = 1; i< route.size()-1;i++) {
             NavigationDirection temp = new NavigationDirection();
             temp.way = g.name(route.get(i));
@@ -62,13 +63,15 @@ public class Router {
             double currBearing = NavigationDirection.bearing(g.lon(route.get(i)),
                     g.lon(route.get(i+1)),g.lat(route.get(i)),g.lat(route.get(i+1)));
             temp.direction = NavigationDirection.getDirection(preBearing,currBearing);
-            temp.distance = 1;
-            if(preDirection == temp.direction){
+            temp.distance = g.estimatedDistanceToGoal(route.get(i),route.get(i+1));
+            if(preDirection == temp.direction || temp.direction == 1){
                 distanceCounter+=temp.distance;
             }else {
                 preDirection = temp.direction;
-                temp.distance+= distanceCounter;
-                navigationDirections.add(temp);
+                pre.distance += distanceCounter;
+                distanceCounter = 0;
+                navigationDirections.add(pre);
+                pre = temp;
             }
 
         }

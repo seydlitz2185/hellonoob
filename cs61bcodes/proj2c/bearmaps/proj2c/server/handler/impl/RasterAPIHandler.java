@@ -114,10 +114,10 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         }
         double blockSizeX = (ROOT_LRLON-ROOT_ULLON)/(Math.pow(2,depth));
         int xBase =(int) ((ullon-ROOT_ULLON)/blockSizeX);
-        int xBound = xBase+ (int) Math.ceil(((lrlon - (ROOT_ULLON+(xBase+1)*blockSizeX))/blockSizeX));
+        int xBound = xBase+ (int) Math.ceil(((lrlon - (ROOT_ULLON+(xBase+1)*blockSizeX))/blockSizeX)-0.0000001);
         double blockSizeY= (ROOT_ULLAT-ROOT_LRLAT)/(Math.pow(2,depth));
         int yBase = (int) ((ROOT_ULLAT-ullat)/blockSizeY);
-        int yBound = yBase+ (int) Math.ceil((((ROOT_ULLAT-(yBase+1)*blockSizeY)-lrlat)/blockSizeY));
+        int yBound = yBase+ (int) Math.ceil((((ROOT_ULLAT-(yBase+1)*blockSizeY)-lrlat)/blockSizeY)-0.0000001);
 
         double raster_ul_lon = ROOT_ULLON + xBase*blockSizeX;
         double raster_lr_lon = ROOT_ULLON + (xBound+1)*blockSizeX;
@@ -128,6 +128,10 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
             for (int j = xBase;j<= xBound;j++ ){
                 render_grid[i-yBase][j-xBase] = "d"+depth+"_x"+j+"_y"+i+".png";
             }
+        }
+        if(render_grid == null){
+            results.put("query_success",false);
+            return results;
         }
         results.put("render_grid",render_grid);
         results.put("raster_ul_lon",raster_ul_lon);
@@ -188,7 +192,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
     /**
      * Writes the images corresponding to rasteredImgParams to the output stream.
      * In Spring 2016, students had to do this on their own, but in 2017,
-     * we made this into provided code since it was just a bit too low level.
+     * we made this into provided code since it was just a bit wtoo low level.
      */
     private  void writeImagesToOutputStream(Map<String, Object> rasteredImageParams,
                                                   ByteArrayOutputStream os) {

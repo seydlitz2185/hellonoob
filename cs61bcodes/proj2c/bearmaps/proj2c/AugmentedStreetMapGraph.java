@@ -8,6 +8,7 @@ import edu.princeton.cs.algs4.TrieSET;
 import edu.princeton.cs.algs4.TrieST;
 import org.eclipse.jetty.util.Trie;
 
+import java.security.Key;
 import java.util.*;
 
 /**
@@ -29,7 +30,11 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         for (Node node: nodes) {
             String s =node.name();
             if(s!=null){
-                myTrieSet.put(cleanString(s),node);
+                //if(this.neighbors(node.id()).size()>0) {
+                //    System.out.println(s);
+                //}
+                //There 're some nodes have same name ,so add id as key
+                myTrieSet.put(cleanString(s)+node.id(),node);
             }
             if(this.neighbors(node.id()).size()>0) {
                 Point point = new Point(node.lon(), node.lat());
@@ -88,13 +93,17 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
         List<Map<String, Object>> resMaps = new ArrayList<>();
         for (String key : locationKeys){
             Map<String,Object> resMap = new HashMap<>();
-            Node node = myTrieSet.get(cleanString(key));
-            if(node != null){
-                resMap.put("lat",node.lat());
-                resMap.put("lon",node.lon());
-                resMap.put("name",node.name());
-                resMap.put("id",node.id());
-                resMaps.add(resMap);
+            List<Long> ids = new ArrayList<>();
+            myTrieSet.keysWithPrefix(cleanString(key)).forEach(elem->ids.add(myTrieSet.get(elem).id()));
+            for (Long id:ids){
+                Node node = myTrieSet.get(cleanString(key)+id);
+                if(node != null){
+                    resMap.put("lat",node.lat());
+                    resMap.put("lon",node.lon());
+                    resMap.put("name",node.name());
+                    resMap.put("id",node.id());
+                    resMaps.add(resMap);
+                }
             }
         }
         return resMaps;
