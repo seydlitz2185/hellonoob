@@ -1,8 +1,11 @@
 package bearmaps.proj2c;
 
 import bearmaps.hw4.AStarSolver;
+import bearmaps.hw4.WeightedEdge;
 import bearmaps.hw4.WeirdSolver;
+import bearmaps.hw4.streetmap.Node;
 
+import java.lang.reflect.GenericDeclaration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +19,21 @@ import java.util.regex.Pattern;
  */
 public class Router {
 
+    /***
+     * find the closest location to a specified point
+     */
+
+    public static String getRoadName(AugmentedStreetMapGraph g, Long start,Long target ){
+        List<WeightedEdge<Long>> locations = g.neighbors(start);
+        String name = null;
+        for (WeightedEdge w : locations){
+            if(w.to().equals(target)){
+                name =w.getName();
+            }
+        }
+
+        return name;
+    }
     /**
      * Overloaded method for shortestPath that has flexibility to specify a solver
      * and returns a List of longs representing the shortest path from the node
@@ -49,25 +67,27 @@ public class Router {
         List<NavigationDirection> navigationDirections = new ArrayList<>();
         NavigationDirection start = new NavigationDirection();
         start.direction= 0;
-        start.way = g.name( route.get(0));
+        start.way = getRoadName(g,route.get(0),route.get(1));
         start.distance = g.estimatedDistanceToGoal(route.get(0),route.get(1));
         NavigationDirection pre = start;
         int preDirection = start.direction;
+        String preRoad = start.way;
         double distanceCounter = 0;
         int dirCounter = 0;
         for ( int i = 1; i< route.size()-1;i++) {
             NavigationDirection temp = new NavigationDirection();
-            temp.way = g.name(route.get(i));
+            temp.way = getRoadName(g,route.get(i),route.get(i+1));
             double preBearing = NavigationDirection.bearing(g.lon(route.get(i-1)),
                     g.lon(route.get(i)),g.lat(route.get(i-1)),g.lat(route.get(i)));
             double currBearing = NavigationDirection.bearing(g.lon(route.get(i)),
                     g.lon(route.get(i+1)),g.lat(route.get(i)),g.lat(route.get(i+1)));
             temp.direction = NavigationDirection.getDirection(preBearing,currBearing);
             temp.distance = g.estimatedDistanceToGoal(route.get(i),route.get(i+1));
-            if(preDirection == temp.direction || temp.direction == 1){
+            if(preRoad.equals(temp.way) ){
                 distanceCounter+=temp.distance;
             }else {
                 preDirection = temp.direction;
+                preRoad = temp.way;
                 pre.distance += distanceCounter;
                 distanceCounter = 0;
                 navigationDirections.add(pre);
@@ -75,7 +95,8 @@ public class Router {
             }
 
         }
-
+        pre.distance += distanceCounter;
+        navigationDirections.add(pre);
         return navigationDirections;
     }
 

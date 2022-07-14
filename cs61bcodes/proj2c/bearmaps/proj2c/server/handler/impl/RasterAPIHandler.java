@@ -93,6 +93,12 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
          */
         if((requestParams.get("lrlon") > ROOT_LRLON && requestParams.get("ullon") < ROOT_ULLON) &&
            (requestParams.get("lrlat") < ROOT_LRLAT && requestParams.get("ullat") > ROOT_ULLAT)){
+            results.put("render_grid",new String[1][]);
+            results.put("raster_ul_lon",0);
+            results.put("raster_lr_lon",0);
+            results.put("raster_ul_lat",0);
+            results.put("raster_lr_lat",0);
+            results.put("depth",0);
             results.put("query_success",false);
             return results;
         }
@@ -123,6 +129,7 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
         double raster_lr_lon = ROOT_ULLON + (xBound+1)*blockSizeX;
         double raster_ul_lat = ROOT_ULLAT - yBase*blockSizeY;
         double raster_lr_lat = ROOT_ULLAT - (yBound+1)*blockSizeY;
+
         String[][] render_grid = new String[yBound-yBase+1][xBound-xBase+1];
         for ( int i = yBase;i <= yBound;i++){
             for (int j = xBase;j<= xBound;j++ ){
@@ -130,6 +137,12 @@ public class RasterAPIHandler extends APIRouteHandler<Map<String, Double>, Map<S
             }
         }
         if(render_grid == null){
+            results.put("render_grid",new String[1][]);
+            results.put("raster_ul_lon",raster_ul_lon);
+            results.put("raster_lr_lon",raster_lr_lon);
+            results.put("raster_ul_lat",raster_ul_lat);
+            results.put("raster_lr_lat",raster_lr_lat);
+            results.put("depth",depth);
             results.put("query_success",false);
             return results;
         }

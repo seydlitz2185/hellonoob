@@ -19,13 +19,16 @@ import java.util.*;
  * @author Alan Yao, Josh Hug, ________
  */
 public class AugmentedStreetMapGraph extends StreetMapGraph {
-    protected TrieST<Node> myTrieSet = new TrieST();
+    protected TrieST<Node> myTrieSet ;
     private KDTree kdt ;
     private Map<Point,Node> nodePointMap;
+    protected List<Node> locations ;
     public AugmentedStreetMapGraph(String dbPath) {
         super(dbPath);
         List<Node> nodes = this.getNodes();
         List<Point> points = new ArrayList<>();
+        myTrieSet = new TrieST<>();
+        locations = new ArrayList<>();
         nodePointMap = new HashMap<>();
         for (Node node: nodes) {
             String s =node.name();
@@ -34,6 +37,9 @@ public class AugmentedStreetMapGraph extends StreetMapGraph {
                 //    System.out.println(s);
                 //}
                 //There 're some nodes have same name ,so add id as key
+                if(s.contains("&")){
+                    locations.add(node);
+                }
                 myTrieSet.put(cleanString(s)+node.id(),node);
             }
             if(this.neighbors(node.id()).size()>0) {
