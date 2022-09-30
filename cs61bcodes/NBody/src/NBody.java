@@ -19,7 +19,7 @@ public  class NBody {
                 planet.draw();
             }
             /**StdAudio.play("/Users/stevenyu/Desktop/lab1-checkoff/NBody/src/audio/cjmg.mp3");*/
-            StdAudio.play("/Users/stevenyu/Desktop/lab1-checkoff/NBody/src/audio/2001.mid");
+            StdAudio.play("src/audio/2001.mid");
         }
 
         for(int i = 0;i<(int)T;i+=dt){
